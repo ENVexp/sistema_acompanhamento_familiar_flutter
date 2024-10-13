@@ -12,9 +12,15 @@ void main() async {
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     await windowManager.ensureInitialized();
 
-    windowManager.waitUntilReadyToShow().then((_) async {
-      await windowManager.setResizable(false);  // Impede o redimensionamento da janela
+    WindowOptions windowOptions = WindowOptions(
+      center: true,
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+    );
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.maximize();           // Abre a janela maximizada
+      await windowManager.show();               // Exibe a janela
+      await windowManager.focus();              // Dá foco à janela
     });
   }
 

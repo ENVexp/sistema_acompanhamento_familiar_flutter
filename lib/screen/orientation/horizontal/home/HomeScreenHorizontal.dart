@@ -27,6 +27,8 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
   final storageService = StorageService();
 
   var _currentScreen = Screens.inicio;
+  User? _cachedUser; // Cache do usuário para evitar carregamento repetido
+
   Map<Screens, IconData> screenIcons = {
     Screens.inicio: Icons.home_outlined,
     Screens.recepcao: Icons.room_service_outlined,
@@ -46,10 +48,41 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
   };
 
   Future<User> _loadUser() async {
+    // Se já temos um usuário carregado no cache, retornamos ele diretamente
+    if (_cachedUser != null) {
+      return _cachedUser!;
+    }
+
+    // Caso contrário, carregamos e atualizamos o cache
     User? user = await User.isLoadUser()
         ? await User.loadUser()
         : await LoadUser().carregarUsuario(await storageService.getUserEmail() ?? '');
-    return user!;
+
+    // Verifica se o usuário está desativado
+    if (user != null && user.estado == "desativado") {
+      // Exibe a Snackbar e chama o logout
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Usuário desativado',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      });
+
+      // Aguarda a exibição da Snackbar antes de realizar o logout
+      Future.delayed(Duration(seconds: 3), () {
+        _logout(); // Chama o método logout
+      });
+    }
+
+    _cachedUser = user; // Salva no cache para não recarregar novamente
+    return _cachedUser!;
   }
 
   void _changeScreen(Screens screen) {
@@ -61,6 +94,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
   void _logout() async {
     await storageService.removeUserEmail();
     await User.deleteUser();
+    _cachedUser = null; // Limpa o cache do usuário ao fazer logout
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => MyApp()),
           (route) => false,
@@ -95,7 +129,6 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
   Widget _buildMainContent(User user, Size screenSize) {
     return LayoutBuilder(
       builder: (context, constraints) {
-
         return Scaffold(
           appBar: AppBar(
             backgroundColor: AppColors.monteAlegreGreen,
@@ -113,7 +146,22 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
               Text('${user.nome} (${user.email})', style: TextStyle(color: Colors.white)),
               IconButton(
                 icon: Icon(Icons.logout, color: Colors.white),
-                onPressed: _logout,
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Logout efetuado!',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      backgroundColor: AppColors.monteAlegreGreen,
+                      behavior: SnackBarBehavior.floating,
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                  Future.delayed(Duration(seconds: 1), () {
+                    _logout(); // Chama o método logout
+                  });
+                },
               ),
             ],
           ),
@@ -150,7 +198,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
               child: Column(
                 children: [
                   for (var screen in Screens.values) ...[
-                    if (screen != Screens.perfil && hasAccess(user.tipo, screen))  ...[
+                    if (screen != Screens.perfil && hasAccess(user.tipo, screen)) ...[
                       _menuItem(screenIcons[screen]!, screen),
                       _divider(),
                     ],
@@ -193,7 +241,6 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
     }
   }
 
-
   Widget _buildUserAvatar() {
     return CircleAvatar(
       radius: 40,
@@ -232,7 +279,6 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
       onTap: () => _changeScreen(screen),
     );
   }
-
 
   Widget _profileButton() {
     return ElevatedButton.icon(

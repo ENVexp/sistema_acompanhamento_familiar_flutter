@@ -1,0 +1,45 @@
+# Flutter
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache
+.pub/
+.idea/
+*.iml
+.vscode/
+*.log
+*.tmp
+*.swp
+
+# Arquivos do Android
+android/app/*.keystore
+android/local.properties
+**/android/key.properties
+
+# Arquivos do Xcode
+ios/Runner.xcworkspace/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Dependências e configuração de pacotes
+.podspec
+Pods/
+Podfile.lock
+
+# Arquivos gerados
+*.dart_tool/
+*.log
+.dart_tool/
+.packages
+.dart_tool/**
+
+# Ignorar a classe Url.dart
+lib/contract/Url.dart
+
+# Arquivos de cache específicos da IDE
+*.idea/
+*.iml
+*.DS_Store

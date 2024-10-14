@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
    Widget build(BuildContext context) {
      return Scaffold(
        body: Center(
-         child: Text("PerfilScreen",
+         child: Text("PerfilScreen mudou",
            style: TextStyle(
                fontSize: 28
            ),),

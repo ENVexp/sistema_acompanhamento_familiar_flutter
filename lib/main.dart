@@ -1,12 +1,19 @@
 import 'dart:io';
 import 'package:acompanhamento_familiar/screen/orientation/horizontal/login/LoginScreenHorizontal.dart';
 import 'package:acompanhamento_familiar/screen/orientation/vertical/login/LoginScreenVertical.dart';
+import 'package:acompanhamento_familiar/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:window_manager/window_manager.dart';
+import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Define a cor da StatusBar para a Web
+  if (kIsWeb) {
+    FlutterStatusbarcolor.setStatusBarColor(AppColors.monteAlegreGreen); // monteAlegreGreen
+  }
 
   // Inicializa o window_manager para controle da janela no desktop
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {

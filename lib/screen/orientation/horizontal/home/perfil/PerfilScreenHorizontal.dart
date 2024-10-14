@@ -12,7 +12,7 @@ class _PerfilScreenHorizontalState extends State<PerfilScreenHorizontal> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("PerfilScreen",
+        child: Text("PerfilScreen M",
           style: TextStyle(
               fontSize: 28
           ),),

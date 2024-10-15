@@ -90,7 +90,7 @@ class _HomeScreenVerticalState extends State<HomeScreenVertical> {
             SnackBar(
               content: Text(
                 'Usuário desativado',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: TextStyle(fontFamily: 'ProductSansMedium', color: Colors.white, fontWeight: FontWeight.bold),
               ),
               backgroundColor: Colors.red,
               behavior: SnackBarBehavior.floating,
@@ -167,7 +167,7 @@ class _HomeScreenVerticalState extends State<HomeScreenVertical> {
         backgroundColor: AppColors.monteAlegreGreen,
         leading: Padding(
           padding: const EdgeInsets.only(left: 15.0), // Afasta o logo da borda
-          child: Image.asset('assets/logo.png', fit: BoxFit.contain),
+          child: Image.asset('assets/images/logo.png', fit: BoxFit.contain),
         ),
         title: Row(
           children: [
@@ -176,11 +176,11 @@ class _HomeScreenVerticalState extends State<HomeScreenVertical> {
               children: [
                 Text(
                   user!.unidade ?? '',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                  style: TextStyle(fontFamily: 'ProductSansMedium',fontSize: 20, color: Colors.white),
                 ),
                 Text(
                   "Bem-vindo, ${getFirstName(user!.nome)}",
-                  style: TextStyle(fontSize: 14, color: Colors.white70),
+                  style: TextStyle(fontFamily: 'ProductSansMedium', fontSize: 14, color: Colors.white70),
                 ),
               ],
             ),
@@ -192,7 +192,7 @@ class _HomeScreenVerticalState extends State<HomeScreenVertical> {
             onPressed: () => {
             ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-            content: Text('Logout efetuado!', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            content: Text('Logout efetuado!', style: TextStyle(fontFamily: 'ProductSansMedium', color: Colors.white, fontWeight: FontWeight.bold),
             ),
             backgroundColor: AppColors.monteAlegreGreen,
             behavior: SnackBarBehavior.floating,
@@ -208,6 +208,8 @@ class _HomeScreenVerticalState extends State<HomeScreenVertical> {
       ),
       body: screenWidgets[_currentScreen] ?? InicioScreenVertical(),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white, // Define o fundo como branco
+        selectedLabelStyle: TextStyle(fontFamily: 'ProductSansMedium'),
         items: availableScreens.map((screen) {
           return BottomNavigationBarItem(
             icon: Icon(screenIcons[screen]),
@@ -219,6 +221,7 @@ class _HomeScreenVerticalState extends State<HomeScreenVertical> {
         unselectedItemColor: Colors.grey,
         onTap: _onBottomNavItemTapped,
       ),
+
     );
   }
 

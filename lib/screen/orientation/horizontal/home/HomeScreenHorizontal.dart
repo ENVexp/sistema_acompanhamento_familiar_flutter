@@ -66,7 +66,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
           SnackBar(
             content: Text(
               'Usuário desativado',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(fontFamily: 'ProductSansMedium', color: Colors.white, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
@@ -138,12 +138,12 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
                 SizedBox(width: 16),
                 Text(
                   _currentScreen.toString().split('.').last.toUpperCase(),
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                  style: TextStyle(fontFamily: 'ProductSansMedium', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ],
             ),
             actions: [
-              Text('${user.nome} (${user.email})', style: TextStyle(color: Colors.white)),
+              Text('${user.nome} (${user.email})', style: TextStyle(fontFamily: 'ProductSansMedium', color: Colors.white)),
               IconButton(
                 icon: Icon(Icons.logout, color: Colors.white),
                 onPressed: () {
@@ -151,7 +151,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
                     SnackBar(
                       content: Text(
                         'Logout efetuado!',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontFamily: 'ProductSansMedium', color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                       backgroundColor: AppColors.monteAlegreGreen,
                       behavior: SnackBarBehavior.floating,
@@ -247,7 +247,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
       backgroundColor: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Image.asset('assets/logo.png', fit: BoxFit.contain),
+        child: Image.asset('assets/images/logo.png', fit: BoxFit.contain),
       ),
     );
   }
@@ -258,7 +258,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
       child: Text(
         "${user.unidade}",
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: TextStyle(fontFamily: 'ProductSansMedium',
           color: Colors.grey,
           fontWeight: FontWeight.bold,
           fontSize: 12,
@@ -274,7 +274,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
       leading: Icon(icon, color: Colors.white),
       title: Text(
         screen.toString().split('.').last.toUpperCase(),
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
+        style: TextStyle(fontFamily: 'ProductSansMedium', color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
       ),
       onTap: () => _changeScreen(screen),
     );
@@ -290,7 +290,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
       icon: Icon(Icons.person_outline, color: AppColors.monteAlegreGreen),
       label: Text(
         "PERFIL",
-        style: TextStyle(color: AppColors.monteAlegreGreen, fontWeight: FontWeight.bold, fontSize: 14),
+        style: TextStyle(fontFamily: 'ProductSansMedium', color: AppColors.monteAlegreGreen, fontWeight: FontWeight.bold, fontSize: 14),
       ),
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.symmetric(horizontal: 50, vertical: 13),

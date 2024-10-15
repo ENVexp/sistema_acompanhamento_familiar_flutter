@@ -36,6 +36,11 @@ class User {
   String get estado => _estado;
   String get unidade => _unidade.isNotEmpty ? _unidade : "";
 
+  void setSenha(String novaSenha) {
+    _senha = novaSenha;
+  }
+
+
   // Converte o objeto para um mapa
   Map<String, dynamic> toMap() {
     return {

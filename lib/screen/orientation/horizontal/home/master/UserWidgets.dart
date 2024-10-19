@@ -15,7 +15,8 @@ class UserDialogs {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0)),
           title: Row(
             children: [
               Text(
@@ -46,7 +47,8 @@ class UserDialogs {
                   children: [
                     Expanded(child: _buildUserInfoRow("Senha", user.senha)),
                     IconButton(
-                      icon: Icon(Icons.email, color: AppColors.monteAlegreGreen),
+                      icon: Icon(
+                          Icons.email, color: AppColors.monteAlegreGreen),
                       onPressed: () {
                         _confirmSendPasswordEmail(context, user.email);
                       },
@@ -79,12 +81,16 @@ class UserDialogs {
         children: [
           Text(
             "$label: ",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, fontFamily: 'ProductSansMedium'),
+            style: TextStyle(fontWeight: FontWeight.bold,
+                fontSize: 20,
+                fontFamily: 'ProductSansMedium'),
           ),
           Flexible(
             child: Text(
               value,
-              style: TextStyle(fontSize: 20, fontFamily: 'ProductSansMedium', color: Colors.black54),
+              style: TextStyle(fontSize: 20,
+                  fontFamily: 'ProductSansMedium',
+                  color: Colors.black54),
             ),
           ),
         ],
@@ -115,7 +121,8 @@ class UserDialogs {
                   ),
                 );
               },
-              child: Text("Enviar", style: TextStyle(color: AppColors.monteAlegreGreen)),
+              child: Text("Enviar",
+                  style: TextStyle(color: AppColors.monteAlegreGreen)),
             ),
           ],
         );
@@ -139,7 +146,8 @@ class UserDialogs {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("Salvar", style: TextStyle(color: AppColors.monteAlegreGreen)),
+              child: Text("Salvar",
+                  style: TextStyle(color: AppColors.monteAlegreGreen)),
             ),
           ],
         );
@@ -154,7 +162,10 @@ class UserDialogs {
       builder: (BuildContext context) {
         return Container(
           padding: EdgeInsets.all(20),
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height * 0.5,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -174,13 +185,15 @@ class UserDialogs {
                   labelStyle: TextStyle(color: AppColors.monteAlegreGreen),
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+                    borderSide: BorderSide(
+                        color: AppColors.monteAlegreGreen, width: 2.0),
                   ),
                 ),
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.monteAlegreGreen),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.monteAlegreGreen),
                 onPressed: () {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -190,7 +203,8 @@ class UserDialogs {
                     ),
                   );
                 },
-                child: Text('Salvar Unidade', style: TextStyle(color: Colors.white)),
+                child: Text(
+                    'Salvar Unidade', style: TextStyle(color: Colors.white)),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -206,34 +220,38 @@ class UserDialogs {
     );
   }
 
-  static void showEditUnitDialog(BuildContext context, String unit, UserDataController userDataController) {
+  static void showEditUnitDialog(BuildContext context, String unit,
+      UserDataController userDataController) {
     TextEditingController _unitController = TextEditingController(text: unit);
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Editar Unidade"),
-        content: TextField(
-          controller: _unitController,
-          decoration: InputDecoration(labelText: "Nome da Unidade"),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("Cancelar", style: TextStyle(color: Colors.red)),
+      builder: (context) =>
+          AlertDialog(
+            title: Text("Editar Unidade"),
+            content: TextField(
+              controller: _unitController,
+              decoration: InputDecoration(labelText: "Nome da Unidade"),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("Cancelar", style: TextStyle(color: Colors.red)),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.monteAlegreGreen),
+                onPressed: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Unidade editada com sucesso!"),
+                        backgroundColor: AppColors.monteAlegreGreen),
+                  );
+                },
+                child: Text("Salvar"),
+              ),
+            ],
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.monteAlegreGreen),
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Unidade editada com sucesso!"), backgroundColor: AppColors.monteAlegreGreen),
-              );
-            },
-            child: Text("Salvar"),
-          ),
-        ],
-      ),
     );
   }
 
@@ -244,7 +262,10 @@ class UserDialogs {
       builder: (BuildContext context) {
         return Container(
           padding: EdgeInsets.all(20),
-          height: MediaQuery.of(context).size.height * 0.8,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height * 0.8,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -260,12 +281,14 @@ class UserDialogs {
               SizedBox(height: 20),
               _buildTextField('Nome', TextInputType.text),
               _buildTextField('E-mail', TextInputType.emailAddress),
-              _buildTextField('Senha', TextInputType.visiblePassword, isPassword: true),
+              _buildTextField(
+                  'Senha', TextInputType.visiblePassword, isPassword: true),
               _buildTextField('Unidade', TextInputType.text),
               _buildTextField('Tipo de Usuário', TextInputType.text),
               SizedBox(height: 20),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.monteAlegreGreen),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.monteAlegreGreen),
                 onPressed: () {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -294,17 +317,20 @@ class UserDialogs {
     );
   }
 
-  static Widget _buildTextField(String label, TextInputType keyboardType, {bool isPassword = false}) {
+  static Widget _buildTextField(String label, TextInputType keyboardType,
+      {bool isPassword = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: AppColors.monteAlegreGreen, fontFamily: 'ProductSansMedium'),
+          labelStyle: TextStyle(color: AppColors.monteAlegreGreen,
+              fontFamily: 'ProductSansMedium'),
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+            borderSide: BorderSide(
+                color: AppColors.monteAlegreGreen, width: 2.0),
           ),
         ),
       ),

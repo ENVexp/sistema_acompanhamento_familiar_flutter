@@ -40,7 +40,6 @@ class User {
     _senha = novaSenha;
   }
 
-
   // Converte o objeto para um mapa
   Map<String, dynamic> toMap() {
     return {
@@ -54,7 +53,7 @@ class User {
     };
   }
 
-  // Cria um objeto `User` a partir de um mapa
+  // Método original fromMap
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
       id: map['ID'] ?? '',
@@ -67,13 +66,27 @@ class User {
     );
   }
 
+  // Novo método para tratar campos nulos de forma mais explícita
+  static User fromJsonWithNullHandling(Map<String, dynamic> map) {
+    return User(
+      id: map['ID'] != null ? map['ID'] as String : '', // Verifica se o valor não é nulo
+      email: map['EMAIL'] != null ? map['EMAIL'] as String : '',
+      senha: map['SENHA'] != null ? map['SENHA'] as String : '',
+      nome: map['NOME'] != null ? map['NOME'] as String : '',
+      tipo: map['TIPO'] != null ? map['TIPO'] as String : '',
+      estado: map['ESTADO'] != null ? map['ESTADO'] as String : 'desativado',
+      unidade: map['UNIDADE'] != null ? map['UNIDADE'] as String : '',
+    );
+  }
 
+  // Salvando o usuário no SharedPreferences
   static Future<void> saveUser(User u) async {
     final prefs = await SharedPreferences.getInstance();
     String jsonString = json.encode(u.toMap());
     await prefs.setString('userString', jsonString);
   }
 
+  // Carregando o usuário do SharedPreferences
   static Future<User?> loadUser() async {
     final prefs = await SharedPreferences.getInstance();
     String? u = prefs.getString('userString');
@@ -86,8 +99,7 @@ class User {
 
   static Future<bool> isLoadUser() async {
     User? user = await loadUser();
-    if (user == null) return false;
-    else return true;
+    return user != null;
   }
 
   static Future<void> deleteUser() async {
@@ -95,4 +107,40 @@ class User {
     await prefs.remove('userString');
   }
 
+  // ================================
+  // Novas implementações sugeridas
+  // ================================
+
+  // Clonando o objeto User
+  User clone() {
+    return User(
+      id: this._id,
+      email: this._email,
+      senha: this._senha,
+      nome: this._nome,
+      tipo: this._tipo,
+      estado: this._estado,
+      unidade: this._unidade,
+    );
+  }
+
+  // Validação simples para verificar se os principais campos estão preenchidos
+  bool isValid() {
+    return _email.isNotEmpty && _senha.isNotEmpty && _nome.isNotEmpty && _tipo.isNotEmpty;
+  }
+
+  // Comparando dois objetos User para verificar se são iguais
+  bool isEqual(User other) {
+    return _id == other._id &&
+        _email == other._email &&
+        _nome == other._nome &&
+        _tipo == other._tipo &&
+        _unidade == other._unidade &&
+        _estado == other._estado;
+  }
+
+  // Converter o User para um JSON String diretamente
+  String toJson() {
+    return json.encode(toMap());
+  }
 }

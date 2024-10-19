@@ -23,15 +23,70 @@ class UserDataController extends ChangeNotifier {
     final loggedUser = await User.loadUser();
 
     if (loggedUser != null && loggedUser.tipo == UserType.COORDENACAO) {
+      // Coordenador: Carrega apenas usuários da unidade
       isCoordination = true;
       userUnit = loggedUser.unidade;
       selectedFilter = userUnit!;
+      await loadUsersByUnidade(userUnit!);  // Carrega usuários da unidade do coordenador
     } else {
+      // Outros usuários: Carregar apenas as unidades para o filtro
       filters = ["Todos"];
       selectedFilter = "Todos";
+      await loadUnidades();  // <-- Carregar as unidades para o filtro
+      await loadUsersAndUnidades();  // Carregar usuários e unidades
     }
+  }
 
-    await loadUsersAndUnidades();  // Carregar usuários e unidades ao mesmo tempo
+  // Método para carregar usuários de uma unidade específica
+  Future<void> loadUsersByUnidade(String unidade) async {
+    try {
+      isLoading = true;
+      print("Carregando usuários da unidade: $unidade...");
+      notifyListeners(); // Notifica para mostrar o progress indicator
+
+      // Fazendo a requisição com a ação 'usersPorUnidade' e um timeout de 30 segundos
+      final response = await http
+          .get(Uri.parse('${Url.URL_USERS_UNIDADES}?action=usersPorUnidade&unidade=$unidade'))
+          .timeout(const Duration(seconds: 30)); // Timeout de 30 segundos
+
+      print("Status da requisição: ${response.statusCode}");
+      print("Corpo completo da resposta: ${response.body}");
+
+      // Verifica se o corpo da resposta está truncado (JSON incompleto)
+      if (!response.body.endsWith(']')) {
+        errorMessage = "Erro: Resposta da API truncada.";
+        print("Resposta truncada: ${response.body}");
+        isLoading = false; // Garante que o indicador de carregamento desapareça
+        notifyListeners();
+        return;
+      }
+
+      // Tentando decodificar a resposta JSON
+      try {
+        // Decodifica diretamente como uma lista de usuários
+        final List<dynamic> data = jsonDecode(response.body);
+
+        // Verifica se a resposta é uma lista válida
+        if (data.isNotEmpty) {
+          // Processa os usuários da unidade
+          filteredUsers = data.map((userJson) => User.fromJsonWithNullHandling(userJson)).toList();
+          print('Usuários da unidade $unidade carregados: ${filteredUsers.length}');
+        } else {
+          errorMessage = "Nenhum usuário encontrado para a unidade $unidade.";
+          print(errorMessage);
+        }
+      } catch (e) {
+        errorMessage = "Erro ao decodificar JSON: $e";
+        print(errorMessage);
+      }
+    } catch (e) {
+      errorMessage = "Erro ao carregar dados: $e";
+      print(errorMessage);
+    } finally {
+      isLoading = false; // Garante que o progress indicator desapareça após carregar os dados
+      notifyListeners(); // Notifica para esconder o círculo de progresso
+      print("Carregamento de usuários da unidade $unidade finalizado.");
+    }
   }
 
   // Método para carregar usuários e unidades da API de uma vez
@@ -72,11 +127,6 @@ class UserDataController extends ChangeNotifier {
           print('Usuários carregados: ${allUsers.length}');
           print('Unidades carregadas: ${allUnidades.length}');
 
-          // Mostra as unidades carregadas
-          for (var unidade in allUnidades) {
-            print('Unidade carregada: ${unidade.nome}');
-          }
-
           // Cria os filtros das unidades
           filters = _getUniqueUnits(allUsers);
           print('Filtros disponíveis: $filters');
@@ -97,17 +147,56 @@ class UserDataController extends ChangeNotifier {
     }
   }
 
-  // Atualiza a lista filtrada com base no tipo de usuário e busca
-  void applyFilters() {
-    filteredUsers = allUsers.where((user) {
-      final matchesSearch = user.nome.toLowerCase().contains(searchQuery.toLowerCase());
-      final matchesFilter = isCoordination
-          ? user.unidade == userUnit  // Filtro de unidade para coordenação
-          : selectedFilter == 'Todos' || user.unidade == selectedFilter;  // Filtro para outros tipos de usuários
-      return matchesSearch && matchesFilter;
-    }).toList();
-    print('Usuários filtrados: ${filteredUsers.length}');
-    notifyListeners();
+  // Método para carregar apenas as unidades da API
+  Future<void> loadUnidades() async {
+    try {
+      isLoading = true;
+      print("Carregando unidades para o filtro...");
+      notifyListeners();  // Notifica para mostrar o indicador de carregamento
+
+      // Fazendo a requisição para carregar todas as unidades
+      final response = await http
+          .get(Uri.parse('${Url.URL_USERS_UNIDADES}?action=todasUnidades'))
+          .timeout(const Duration(seconds: 30));
+
+      print("Status da requisição: ${response.statusCode}");
+      print("Corpo da resposta: ${response.body}");
+
+      // Verifica se o corpo da resposta está truncado
+      if (!response.body.endsWith(']')) {
+        errorMessage = "Erro: Resposta da API truncada.";
+        print("Resposta truncada: ${response.body}");
+        isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      // Tentando decodificar a resposta JSON
+      try {
+        final List<dynamic> data = jsonDecode(response.body);
+
+        if (data.isNotEmpty) {
+          allUnidades = data.map((unidadeJson) => Unidade.fromJsonWithNullHandling(unidadeJson)).toList();
+          print('Unidades carregadas: ${allUnidades.length}');
+
+          // Cria os filtros baseados nas unidades
+          filters = _getUniqueUnits(allUsers);  // Usando a lista carregada para criar filtros
+          print('Filtros disponíveis: $filters');
+        } else {
+          errorMessage = "Nenhuma unidade encontrada.";
+          print(errorMessage);
+        }
+      } catch (e) {
+        errorMessage = "Erro ao decodificar JSON: $e";
+        print(errorMessage);
+      }
+    } catch (e) {
+      errorMessage = "Erro ao carregar dados: $e";
+      print(errorMessage);
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   // Método para obter unidades únicas dos usuários
@@ -115,6 +204,22 @@ class UserDataController extends ChangeNotifier {
     final units = users.map((user) => user.unidade).toSet().toList();
     units.sort();
     return ["Todos", ...units]; // Adiciona "Todos" como opção
+  }
+
+  // Atualiza a lista filtrada com base no tipo de usuário e busca
+  void applyFilters() {
+    // Verifica se o usuário é coordenador. Se for, não aplica filtro, apenas retorna.
+    if (isCoordination) {
+      return; // Não aplicar filtros quando for coordenador
+    }
+
+    filteredUsers = allUsers.where((user) {
+      final matchesSearch = user.nome.toLowerCase().contains(searchQuery.toLowerCase());
+      final matchesFilter = selectedFilter == 'Todos' || user.unidade == selectedFilter;
+      return matchesSearch && matchesFilter;
+    }).toList();
+    print('Usuários filtrados: ${filteredUsers.length}');
+    notifyListeners();
   }
 
   // Getters e setters para searchQuery e selectedFilter

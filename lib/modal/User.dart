@@ -143,4 +143,24 @@ class User {
   String toJson() {
     return json.encode(toMap());
   }
+
+  // ==================================
+  // Novos métodos de depuração e checagem
+  // ==================================
+
+  // Método para verificar se algum campo importante está vazio
+  bool hasEmptyFields() {
+    return _id.isEmpty || _email.isEmpty || _nome.isEmpty || _tipo.isEmpty || _unidade.isEmpty || _estado.isEmpty;
+  }
+
+  // Método de depuração para exibir informações completas do usuário
+  void printDebugInfo() {
+    print('User Debug Info:');
+    print('ID: $_id');
+    print('Email: $_email');
+    print('Nome: $_nome');
+    print('Tipo: $_tipo');
+    print('Unidade: $_unidade');
+    print('Estado: $_estado');
+  }
 }

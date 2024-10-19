@@ -22,7 +22,7 @@ class _UserTabState extends State<UserTab> {
   bool isCoordination = false;
   final ScrollController _scrollController = ScrollController();
   List<Unidade> unidades = [];
-  String selectedUnidade = 'TODAS';
+  String selectedUnidade = 'TODAS';  // "TODAS" como valor padrão para exibir todos os usuários
 
   @override
   void initState() {
@@ -41,41 +41,70 @@ class _UserTabState extends State<UserTab> {
 
     final userDataController = Provider.of<UserDataController>(context, listen: false);
 
-    if (isCoordination) {
-      // Carrega usuários e unidades em uma única chamada para coordenadores
-      await userDataController.loadUsersAndUnidades();
+    if (isCoordination && loggedUser != null) {
+      // Se for coordenador, carrega apenas os usuários da unidade do coordenador
+      print('Carregando usuários da unidade do coordenador: ${loggedUser!.unidade}');
+      await userDataController.loadUsersByUnidade(loggedUser!.unidade!);
     } else {
-      // Para outros usuários, também carrega usuários e unidades em uma única chamada
-      print('Carregando usuários e unidades...');
-      await userDataController.loadUsersAndUnidades();
+      // Para outros usuários, carrega todos os usuários e unidades
+      print('Carregando todos os usuários e unidades...');
+      await userDataController.loadUnidades(); // Carrega unidades separadamente
+      await userDataController.loadUsersAndUnidades(); // Carrega usuários e unidades juntos
+
       // Popula a lista de unidades com "TODAS" + unidades retornadas da API
       unidades = [Unidade(id: '0', nome: 'TODAS'), ...userDataController.allUnidades];
     }
 
-    _applyFilters();
+    // Não é necessário aplicar filtros se o usuário for coordenador
+    if (!isCoordination) {
+      _applyFilters();  // Aplica filtros após carregar os dados (somente para não coordenadores)
+    }
   }
 
   void _applyFilters() {
     final userDataController = Provider.of<UserDataController>(context, listen: false);
-    print("Aplicando filtros...");
 
-    if (isCoordination && loggedUser != null) {
-      print('Coordenador filtrando por unidade: ${loggedUser!.unidade}');
-      userDataController.filteredUsers = userDataController.allUsers.where((user) {
-        return user.unidade == loggedUser!.unidade;
-      }).toList();
-    } else {
-      if (selectedUnidade == 'TODAS') {
-        print('Carregando todos os usuários...');
-        userDataController.filteredUsers = userDataController.allUsers;
-      } else {
-        print('Filtrando por unidade: $selectedUnidade');
-        userDataController.filteredUsers = userDataController.allUsers.where((user) {
-          return user.unidade == selectedUnidade;
-        }).toList();
+    // Logs para depuração
+    print("Aplicando filtros...");
+    print("Usuários totais carregados: ${userDataController.allUsers.length}");
+    print("Unidade selecionada: $selectedUnidade");  // Verificar o valor da unidade selecionada
+    print("Busca: $searchQuery");
+
+    // Depuração: Imprime os detalhes dos usuários carregados
+    for (var user in userDataController.allUsers) {
+      user.printDebugInfo();  // Aqui será impresso o debug de cada usuário
+      if (user.hasEmptyFields()) {
+        print("Atenção: O usuário ${user.nome} tem campos importantes vazios.");
       }
     }
-    userDataController.applyFilters();
+
+    // Verifica se a unidade selecionada é "TODAS" ou outra unidade específica
+    if (selectedUnidade == 'TODAS' || selectedUnidade.isEmpty) {
+      // Carrega todos os usuários sem filtrar por unidade
+      print('Nenhuma unidade específica selecionada, carregando todos os usuários...');
+      userDataController.filteredUsers = userDataController.allUsers;
+    } else {
+      // Filtra pela unidade selecionada
+      print('Filtrando usuários pela unidade: $selectedUnidade');
+      userDataController.filteredUsers = userDataController.allUsers.where((user) {
+        print('Verificando usuário: ${user.nome}, Unidade: ${user.unidade}');
+        return user.unidade == selectedUnidade;  // Filtra pela unidade correta
+      }).toList();
+      print('Usuários filtrados após filtro de unidade: ${userDataController.filteredUsers.length}');
+    }
+
+    // Filtrando por nome ou busca
+    if (searchQuery.isNotEmpty) {
+      print('Filtrando usuários pela busca: $searchQuery');
+      userDataController.filteredUsers = userDataController.filteredUsers.where((user) {
+        print('Verificando busca em usuário: ${user.nome}');
+        return user.nome.toLowerCase().contains(searchQuery.toLowerCase());
+      }).toList();
+      print('Usuários filtrados após busca: ${userDataController.filteredUsers.length}');
+    }
+
+    userDataController.applyFilters();  // Atualiza a UI
+    print('Filtragem completa. Total de usuários filtrados: ${userDataController.filteredUsers.length}');
   }
 
   @override
@@ -119,34 +148,48 @@ class _UserTabState extends State<UserTab> {
                       },
                       decoration: InputDecoration(
                         labelText: "Pesquisar Usuários",
-                        labelStyle: TextStyle(color: Colors.black, fontFamily: 'ProductSansMedium'),
-                        prefixIcon: Icon(Icons.search, color: AppColors.monteAlegreGreen),
+                        labelStyle: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'ProductSansMedium'),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: AppColors.monteAlegreGreen,
+                        ),
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+                          borderSide: BorderSide(
+                              color: AppColors.monteAlegreGreen,
+                              width: 2.0),
                         ),
                       ),
                       cursorColor: AppColors.monteAlegreGreen,
-                      style: TextStyle(color: Colors.black, fontFamily: 'ProductSansMedium'),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'ProductSansMedium'),
                     ),
                   ),
                 ),
                 SizedBox(width: 8),
                 PopupMenuButton<String>(
-                  icon: Icon(Icons.filter_list, color: AppColors.monteAlegreGreen),
+                  icon: Icon(
+                    Icons.filter_list,
+                    color: AppColors.monteAlegreGreen,
+                  ),
                   onSelected: (String value) {
                     setState(() {
-                      selectedUnidade = value;
-                      _applyFilters();
+                      selectedUnidade = value;  // Atualiza a unidade selecionada
+                      _applyFilters();  // Aplica o filtro após a seleção
                     });
                   },
                   itemBuilder: (BuildContext context) {
-                    return unidades.map((unidade) {
+                    // Certifique-se de que estamos usando a lista de filtros carregada
+                    return userDataController.filters.map((unidade) {
                       return PopupMenuItem<String>(
-                        value: unidade.nome,
+                        value: unidade,
                         child: Text(
-                          unidade.nome,
-                          style: TextStyle(fontFamily: 'ProductSansMedium'),
+                          unidade,
+                          style: TextStyle(
+                              fontFamily: 'ProductSansMedium'),
                         ),
                       );
                     }).toList();
@@ -160,7 +203,8 @@ class _UserTabState extends State<UserTab> {
             padding: const EdgeInsets.all(16.0),
             child: Card(
               color: Colors.grey[100],
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -168,22 +212,34 @@ class _UserTabState extends State<UserTab> {
                   children: [
                     Text(
                       "Nome: ${selectedUser!.nome}",
-                      style: TextStyle(fontFamily: 'ProductSansMedium', fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontFamily: 'ProductSansMedium',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 4),
                     Text(
                       "Email: ${selectedUser!.email}",
-                      style: TextStyle(fontFamily: 'ProductSansMedium', fontSize: 14, color: Colors.black87),
+                      style: TextStyle(
+                          fontFamily: 'ProductSansMedium',
+                          fontSize: 14,
+                          color: Colors.black87),
                     ),
                     SizedBox(height: 4),
                     Text(
                       "Unidade: ${selectedUser!.unidade ?? 'N/A'}",
-                      style: TextStyle(fontFamily: 'ProductSansMedium', fontSize: 14, color: Colors.black54),
+                      style: TextStyle(
+                          fontFamily: 'ProductSansMedium',
+                          fontSize: 14,
+                          color: Colors.black54),
                     ),
                     SizedBox(height: 4),
                     Text(
                       "Tipo: ${selectedUser!.tipo}",
-                      style: TextStyle(fontFamily: 'ProductSansMedium', fontSize: 14, color: Colors.black54),
+                      style: TextStyle(
+                          fontFamily: 'ProductSansMedium',
+                          fontSize: 14,
+                          color: Colors.black54),
                     ),
                     SizedBox(height: 4),
                     Text(
@@ -191,7 +247,8 @@ class _UserTabState extends State<UserTab> {
                       style: TextStyle(
                         fontFamily: 'ProductSansMedium',
                         fontSize: 14,
-                        color: selectedUser!.estado.toLowerCase() == 'ativado'
+                        color: selectedUser!.estado.toLowerCase() ==
+                            'ativado'
                             ? AppColors.monteAlegreGreen
                             : Colors.red,
                       ),
@@ -219,9 +276,10 @@ class _UserTabState extends State<UserTab> {
             itemBuilder: (context, index) {
               final user = userDataController.filteredUsers[index];
               return ListTile(
-                title: Text(user.nome, style: TextStyle(fontFamily: 'ProductSansMedium')),
-                subtitle: Text(user.email),
-                trailing: Text(user.unidade ?? 'N/A'),
+                title: Text(user.nome.isNotEmpty ? user.nome : 'Nome não disponível',
+                    style: TextStyle(fontFamily: 'ProductSansMedium')),
+                subtitle: Text(user.email.isNotEmpty ? user.email : 'Email não disponível'),
+                trailing: Text(user.unidade.isNotEmpty ? user.unidade : 'Unidade não disponível'),
                 onTap: () {
                   setState(() {
                     selectedUser = user;

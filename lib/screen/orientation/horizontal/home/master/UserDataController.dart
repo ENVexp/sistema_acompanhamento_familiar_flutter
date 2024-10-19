@@ -33,9 +33,62 @@ class UserDataController extends ChangeNotifier {
       filters = ["Todos"];
       selectedFilter = "Todos";
       await loadUnidades();  // <-- Carregar as unidades para o filtro
-      await loadUsersAndUnidades();  // Carregar usuários e unidades
+      await loadUsers();  // Carregar usuários e unidades
+      // await loadUsersAndUnidades();  // Carregar usuários e unidades
     }
   }
+
+  Future<void> loadUsers() async {
+    try {
+      isLoading = true;
+      print("Carregando usuários");
+      notifyListeners(); // Notifica para mostrar o progress indicator
+
+      // Fazendo a requisição com a ação 'usersPorUnidade' e um timeout de 30 segundos
+      final response = await http
+          .get(Uri.parse('${Url.URL_USERS_UNIDADES}?action=getUsers'))
+          .timeout(const Duration(seconds: 30)); // Timeout de 30 segundos
+
+      print("Status da requisição: ${response.statusCode}");
+      print("Corpo completo da resposta: ${response.body}");
+
+      // Verifica se o corpo da resposta está truncado (JSON incompleto)
+      if (!response.body.endsWith(']')) {
+        errorMessage = "Erro: Resposta da API truncada.";
+        print("Resposta truncada: ${response.body}");
+        isLoading = false; // Garante que o indicador de carregamento desapareça
+        notifyListeners();
+        return;
+      }
+
+      // Tentando decodificar a resposta JSON
+      try {
+        // Decodifica diretamente como uma lista de usuários
+        final List<dynamic> data = jsonDecode(response.body);
+
+        // Verifica se a resposta é uma lista válida
+        if (data.isNotEmpty) {
+          // Processa os usuários da unidade
+          filteredUsers = data.map((userJson) => User.fromJsonWithNullHandling(userJson)).toList();
+          print('Usuários carregados: ${filteredUsers.length}');
+        } else {
+          errorMessage = "Nenhum usuários encontrado";
+          print(errorMessage);
+        }
+      } catch (e) {
+        errorMessage = "Erro ao decodificar JSON: $e";
+        print(errorMessage);
+      }
+    } catch (e) {
+      errorMessage = "Erro ao carregar dados: $e";
+      print(errorMessage);
+    } finally {
+      isLoading = false; // Garante que o progress indicator desapareça após carregar os dados
+      notifyListeners(); // Notifica para esconder o círculo de progresso
+      print("Carregamento de usuários finalizado.");
+    }
+  }
+
 
   // Método para carregar usuários de uma unidade específica
   Future<void> loadUsersByUnidade(String unidade) async {

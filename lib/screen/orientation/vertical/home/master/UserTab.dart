@@ -50,6 +50,7 @@ class _UserTabState extends State<UserTab> {
       print('Carregando todos os usuários e unidades...');
       await userDataController.loadUnidades(); // Carrega unidades separadamente
       await userDataController.loadUsersAndUnidades(); // Carrega usuários e unidades juntos
+      // await userDataController.loadUsers(); // Carrega usuários e unidades juntos
 
       // Popula a lista de unidades com "TODAS" + unidades retornadas da API
       unidades = [Unidade(id: '0', nome: 'TODAS'), ...userDataController.allUnidades];
@@ -86,24 +87,29 @@ class _UserTabState extends State<UserTab> {
     } else {
       // Filtra pela unidade selecionada
       print('Filtrando usuários pela unidade: $selectedUnidade');
-      userDataController.filteredUsers = userDataController.allUsers.where((user) {
-        print('Verificando usuário: ${user.nome}, Unidade: ${user.unidade}');
-        return user.unidade == selectedUnidade;  // Filtra pela unidade correta
-      }).toList();
-      print('Usuários filtrados após filtro de unidade: ${userDataController.filteredUsers.length}');
+
+      setState(() {
+        userDataController.filteredUsers = userDataController.allUsers.where((user) {
+          print('Verificando usuário: ${user.nome}, Unidade: ${user.unidade}');
+          return user.unidade == selectedUnidade;  // Filtra pela unidade correta
+        }).toList();
+        print('Usuários filtrados após filtro de unidade: ${userDataController.filteredUsers.length}');
+      });
     }
 
     // Filtrando por nome ou busca
     if (searchQuery.isNotEmpty) {
-      print('Filtrando usuários pela busca: $searchQuery');
-      userDataController.filteredUsers = userDataController.filteredUsers.where((user) {
-        print('Verificando busca em usuário: ${user.nome}');
-        return user.nome.toLowerCase().contains(searchQuery.toLowerCase());
-      }).toList();
-      print('Usuários filtrados após busca: ${userDataController.filteredUsers.length}');
+      setState(() {
+        print('Filtrando usuários pela busca: $searchQuery');
+        userDataController.filteredUsers = userDataController.filteredUsers.where((user) {
+          print('Verificando busca em usuário: ${user.nome}');
+          return user.nome.toLowerCase().contains(searchQuery.toLowerCase());
+        }).toList();
+        print('Usuários filtrados após busca: ${userDataController.filteredUsers.length}');
+      });
     }
 
-    userDataController.applyFilters();  // Atualiza a UI
+    // userDataController.applyFilters();  // Atualiza a UI
     print('Filtragem completa. Total de usuários filtrados: ${userDataController.filteredUsers.length}');
   }
 

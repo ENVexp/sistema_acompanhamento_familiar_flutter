@@ -12,7 +12,7 @@ class UserDataController extends ChangeNotifier {
   List<Unidade> allUnidades = [];
   List<String> filters = [];
   String searchQuery = '';
-  String selectedFilter = 'Todos';
+  String selectedFilter = 'TODAS';
   bool isLoading = true; // Inicializa com true para mostrar o progress indicator
   bool isCoordination = false;
   String? userUnit;
@@ -30,8 +30,8 @@ class UserDataController extends ChangeNotifier {
       await loadUsersByUnidade(userUnit!);  // Carrega usuários da unidade do coordenador
     } else {
       // Outros usuários: Carregar apenas as unidades para o filtro
-      filters = ["Todos"];
-      selectedFilter = "Todos";
+      filters = ["TODAS"];
+      selectedFilter = "TODAS";
       await loadUnidades();  // <-- Carregar as unidades para o filtro
       await loadUsers();  // Carregar usuários e unidades
       // await loadUsersAndUnidades();  // Carregar usuários e unidades
@@ -256,7 +256,7 @@ class UserDataController extends ChangeNotifier {
   List<String> _getUniqueUnits(List<User> users) {
     final units = users.map((user) => user.unidade).toSet().toList();
     units.sort();
-    return ["Todos", ...units]; // Adiciona "Todos" como opção
+    return ["TODAS", ...units]; // Adiciona "Todos" como opção
   }
 
   // Atualiza a lista filtrada com base no tipo de usuário e busca
@@ -268,7 +268,7 @@ class UserDataController extends ChangeNotifier {
 
     filteredUsers = allUsers.where((user) {
       final matchesSearch = user.nome.toLowerCase().contains(searchQuery.toLowerCase());
-      final matchesFilter = selectedFilter == 'Todos' || user.unidade == selectedFilter;
+      final matchesFilter = selectedFilter == 'TODAS' || user.unidade == selectedFilter;
       return matchesSearch && matchesFilter;
     }).toList();
     print('Usuários filtrados: ${filteredUsers.length}');

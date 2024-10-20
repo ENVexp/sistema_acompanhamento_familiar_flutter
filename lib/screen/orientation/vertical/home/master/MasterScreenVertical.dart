@@ -54,10 +54,8 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
     isCoordination = loggedUser?.tipo == UserType.COORDENACAO;
     // Inicializa o TabController após a verificação de tipo do usuário
     setState(() {
-      _tabController = TabController(
-        length: isCoordination ? 2 : 3,
-        vsync: this,
-      );
+
+
     });
   }
 
@@ -187,10 +185,18 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
                         backgroundColor: Colors.red,
                       );
                     } else {
+                      criarNovoUsuario(
+                          _controleEMail.text,
+                          _controleSenha.text,
+                          _controleNome.text,
+                        itemType,
+                        itemUnidade,
+                        "ativado"
+                      );
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Usuário criado com sucesso!'),
+                          content: Text('Criando novo usuário...'),
                           backgroundColor: AppColors.monteAlegreGreen,
                         ),
                       );
@@ -353,6 +359,54 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
         ),
       ),
     );
+  }
+
+  Future<void> criarNovoUsuario(String email, String senha, String nome, String tipo, String unidade, String estado) async {
+    // Monta a URL com os parâmetros do novo usuário
+    final uri = Uri.parse(
+      '${Url.URL_NOVO_USER}?email=$email&senha=$senha&nome=$nome&tipo=$tipo&unidade=$unidade&estado=$estado',
+    );
+
+    try {
+      // Faz a requisição HTTP GET
+      final response = await http.get(uri);
+
+      // Verifica se a requisição foi bem-sucedida (código de status 200)
+      if (response.statusCode == 200) {
+        // Exibe a resposta do servidor
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Usuário criado com sucesso!'),
+            backgroundColor: AppColors.monteAlegreGreen,
+          ),
+        );
+        setState(() {
+          _tabController = TabController(
+            length: isCoordination ? 2 : 3,
+            vsync: this,
+          );
+        });
+        print('Resposta do servidor: ${response.body}');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao criar o usuário!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        // Exibe um erro caso a resposta não seja sucesso
+        print('Erro ao criar o usuário: ${response.statusCode}');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao criar o usuário!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      // Captura qualquer erro que ocorra durante a requisição
+      print('Erro: $e');
+    }
   }
 
 

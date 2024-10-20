@@ -140,7 +140,7 @@ class _UserTabState extends State<UserTab> {
                     data: Theme.of(context).copyWith(
                       textSelectionTheme: TextSelectionThemeData(
                         cursorColor: AppColors.monteAlegreGreen,
-                        selectionColor: Colors.lightGreenAccent,
+                        selectionColor: Colors.greenAccent,
                         selectionHandleColor: AppColors.monteAlegreGreen,
                       ),
                     ),

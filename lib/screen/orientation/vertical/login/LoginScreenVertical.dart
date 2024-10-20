@@ -125,7 +125,7 @@ class _LoginScreenVerticalState extends State<LoginScreenVertical> {
           data: Theme.of(context).copyWith(
             textSelectionTheme: TextSelectionThemeData(
               cursorColor: AppColors.monteAlegreGreen,
-              selectionColor: Colors.lightGreenAccent,
+              selectionColor: Colors.greenAccent,
               selectionHandleColor: AppColors.monteAlegreGreen,
             ),
           ),
@@ -207,7 +207,7 @@ class _LoginScreenVerticalState extends State<LoginScreenVertical> {
       data: Theme.of(context).copyWith(
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: AppColors.monteAlegreGreen,
-          selectionColor: Colors.lightGreenAccent,
+          selectionColor: Colors.greenAccent,
           selectionHandleColor: AppColors.monteAlegreGreen,
         ),
       ),

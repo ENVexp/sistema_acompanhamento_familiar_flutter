@@ -127,7 +127,7 @@ class _LoginScreenHorizontalState extends State<LoginScreenHorizontal> {
           data: Theme.of(context).copyWith(
             textSelectionTheme: TextSelectionThemeData(
               cursorColor: AppColors.monteAlegreGreen,
-              selectionColor: Colors.lightGreenAccent,
+              selectionColor: Colors.greenAccent,
               selectionHandleColor: AppColors.monteAlegreGreen,
             ),
           ),
@@ -210,7 +210,7 @@ class _LoginScreenHorizontalState extends State<LoginScreenHorizontal> {
       data: Theme.of(context).copyWith(
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: AppColors.monteAlegreGreen,
-          selectionColor: Colors.lightGreenAccent,
+          selectionColor: Colors.greenAccent,
           selectionHandleColor: AppColors.monteAlegreGreen,
         ),
       ),

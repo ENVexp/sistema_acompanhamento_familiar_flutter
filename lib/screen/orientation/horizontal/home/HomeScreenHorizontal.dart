@@ -12,7 +12,7 @@ import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/recep
 import '../../../../contract/Url.dart';
 import '../../../../contract/UserType.dart';
 import '../../../../main.dart';
-import '../../../../modal/User.dart';
+import '../../../../model/User.dart';
 import '../../../../shared/storage_service.dart';
 import '../../../../themes/app_colors.dart';
 import '../../unspecified/LoadUser.dart';

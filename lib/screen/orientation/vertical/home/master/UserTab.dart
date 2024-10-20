@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
-import '../../../../../themes/app_colors.dart';
-import '../../../../../modal/User.dart';
-import '../../../../../modal/Unidade.dart';
-import '../../../../../contract/Url.dart';
-import '../../../horizontal/home/master/UserDataController.dart';
 import '../../../../../contract/UserType.dart';
+import '../../../../../model/Unidade.dart';
+import '../../../../../model/User.dart';
+import '../../../../../themes/app_colors.dart';
+import '../../../horizontal/home/master/UserDataController.dart';
 
 class UserTab extends StatefulWidget {
   @override

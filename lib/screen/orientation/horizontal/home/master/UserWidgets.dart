@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:acompanhamento_familiar/themes/app_colors.dart';
-import 'package:acompanhamento_familiar/modal/User.dart';
+import 'package:acompanhamento_familiar/model/User.dart';
 import 'UserDataController.dart';
 import 'package:provider/provider.dart';
 import '../../../unspecified/login/PasswordRecoveryService.dart';

@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:acompanhamento_familiar/themes/app_colors.dart';
 import '../../../../../contract/Url.dart';
 import '../../../../../main.dart';
-import '../../../../../modal/User.dart';
+import '../../../../../model/User.dart';
 import '../../../../../shared/storage_service.dart';
 
 class PerfilScreenVertical extends StatefulWidget {

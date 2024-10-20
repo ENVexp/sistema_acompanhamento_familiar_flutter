@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../../../../contract/Url.dart';
-import '../../../../../modal/User.dart';
-import '../../../../../modal/Unidade.dart';
+import '../../../../../model/User.dart';
+import '../../../../../model/Unidade.dart';
 import '../../../../../contract/UserType.dart';
 
 class UserDataController extends ChangeNotifier {

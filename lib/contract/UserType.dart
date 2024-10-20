@@ -1,8 +1,8 @@
 class UserType{
-  static const String VISUALIZACAO = "visualizacao";
-  static const String RECEPCAO = "recepcao";
-  static const String TECNICO = "tecnico";
-  static const String COORDENACAO = "coordenacao";
-  static const String MASTER = "master";
-  static const String DESENVOLVEDOR = "desenvolvedor";
+  static const String VISUALIZACAO = "VISUALIZACAO";
+  static const String RECEPCAO = "RECEPCAO";
+  static const String TECNICO = "TECNICO";
+  static const String COORDENACAO = "COORDENACAO";
+  static const String MASTER = "MASTER";
+  static const String DESENVOLVEDOR = "DESENVOLVEDOR";
 }

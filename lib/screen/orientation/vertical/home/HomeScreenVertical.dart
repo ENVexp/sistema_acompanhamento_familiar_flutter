@@ -9,7 +9,7 @@ import 'package:acompanhamento_familiar/screen/orientation/vertical/home/master/
 import 'package:acompanhamento_familiar/screen/orientation/vertical/home/desenvolvedor/DesenvolvedorScreenVertical.dart';
 import '../../../../contract/UserType.dart';
 import '../../../../main.dart';
-import '../../../../modal/User.dart';
+import '../../../../model/User.dart';
 import '../../../../shared/storage_service.dart';
 import '../../../../themes/app_colors.dart';
 import '../../unspecified/LoadUser.dart';

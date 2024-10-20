@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../contract/Url.dart';
-import '../../../modal/User.dart';
+import '../../../model/User.dart';
 
 class LoadUser {
   // Método para carregar informações do usuário pelo email

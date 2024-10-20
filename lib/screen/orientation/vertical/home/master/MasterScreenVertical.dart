@@ -322,20 +322,38 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
   Widget _buildTextField(String label, TextEditingController controller, TextInputType keyboardType, {bool isPassword = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        obscureText: isPassword,
-        controller: controller,
-        cursorColor: AppColors.monteAlegreGreen,
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(color: AppColors.monteAlegreGreen, fontFamily: 'ProductSansMedium'),
-          border: OutlineInputBorder(),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: AppColors.monteAlegreGreen, // Cor do cursor
+            selectionColor: Colors.greenAccent, // Cor do fundo da seleção (claro)
+            selectionHandleColor: AppColors.monteAlegreGreen, // Cor das alças de seleção (escuro)
+          ),
+        ),
+        child: TextField(
+          style: TextStyle( // Estilo do texto digitado
+            color: Colors.black, // Cor do texto digitado
+            fontFamily: 'ProductSansMedium', // Fonte personalizada
+          ),
+          obscureText: isPassword,
+          controller: controller,
+          keyboardType: keyboardType,
+          cursorColor: AppColors.monteAlegreGreen,
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: TextStyle(
+              color: AppColors.monteAlegreGreen,
+              fontFamily: 'ProductSansMedium',
+            ),
+            border: OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+            ),
           ),
         ),
       ),
     );
   }
+
 
 }

@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 import '../../../../../contract/Url.dart';
 import '../../../../../contract/UserType.dart';
 import '../../../../../model/User.dart';
 import '../../../../../themes/app_colors.dart';
+import '../../../horizontal/home/master/UserDataController.dart';
 import 'BackupTab.dart';
 import 'UnitTab.dart';
 import 'UserTab.dart';
@@ -25,6 +27,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
   List<dynamic> listType = [];
   var itemUnidade = "";
   var itemType = UserType.VISUALIZACAO;
+  UserTab userTab = UserTab();
 
   @override
   void initState() {
@@ -54,8 +57,10 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
     isCoordination = loggedUser?.tipo == UserType.COORDENACAO;
     // Inicializa o TabController após a verificação de tipo do usuário
     setState(() {
-
-
+      _tabController = TabController(
+          length: isCoordination ? 2 : 3,
+          vsync: this,
+         );
     });
   }
 
@@ -106,11 +111,11 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
               controller: _tabController,
               children: isCoordination
                   ? [
-                UserTab(),
+                userTab,
                 BackupTab(),
               ]
                   : [
-                UserTab(),
+                userTab,
                 UnitTab(),
                 BackupTab(),
               ],
@@ -229,21 +234,6 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
     if(_isCoordenacao){
       itemUnidade = loggedUser!.unidade;
       return SizedBox(height: 8);
-      //   Padding(
-      //   padding: const EdgeInsets.symmetric(vertical: 8.0),
-      //   child: TextField(
-      //     controller: controller,
-      //     enabled: !_isCoordenacao,
-      //     decoration: InputDecoration(
-      //       labelText: 'Unidade',
-      //       labelStyle: TextStyle(color: AppColors.monteAlegreGreen, fontFamily: 'ProductSansMedium'),
-      //       border: OutlineInputBorder(),
-      //       focusedBorder: OutlineInputBorder(
-      //         borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
-      //       ),
-      //     ),
-      //   ),
-      // );
     } else {
 
       /*  List<Map<String, dynamic>> mapUnidade = [];
@@ -293,7 +283,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
   }
 
   Widget _buildTextType(StateSetter setState) {
-    listType = [UserType.VISUALIZACAO, UserType.RECEPCAO, UserType.COORDENACAO];
+    listType = [UserType.VISUALIZACAO, UserType.RECEPCAO, UserType.TECNICO, UserType.COORDENACAO];
     if (loggedUser?.tipo == UserType.MASTER) listType.add(UserType.MASTER);
     if (loggedUser?.tipo == UserType.DESENVOLVEDOR) listType.add(UserType.DESENVOLVEDOR);
 
@@ -380,17 +370,16 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
             backgroundColor: AppColors.monteAlegreGreen,
           ),
         );
-        setState(() {
-          _tabController = TabController(
-            length: isCoordination ? 2 : 3,
-            vsync: this,
-          );
-        });
+          final userDataController = Provider.of<UserDataController>(context, listen: false);
+
+          if(loggedUser?.tipo == UserType.COORDENACAO)  await userDataController.loadUsersByUnidade(loggedUser!.unidade!);
+          else await userDataController.loadUsersAndUnidades(); // Carrega usuários e unidades juntos
+
         print('Resposta do servidor: ${response.body}');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao criar o usuário!'),
+            content: Text('Ops... algo deu errado!'),
             backgroundColor: Colors.red,
           ),
         );
@@ -401,6 +390,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao criar o usuário!'),
+          // content: Text('Erro: $e'),
           backgroundColor: Colors.red,
         ),
       );

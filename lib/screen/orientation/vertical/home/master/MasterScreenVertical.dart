@@ -15,6 +15,13 @@ import 'UserTab.dart';
 
 
 class MasterScreenVertical extends StatefulWidget {
+  static List<dynamic> listShared = [];
+
+  static setList(List<dynamic> list){
+    listShared = [];
+    listShared.addAll(list);
+  }
+
   @override
   _MasterScreenVerticalState createState() => _MasterScreenVerticalState();
 }
@@ -42,6 +49,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
         .timeout(const Duration(seconds: 30));
     try{
       listUnidades = jsonDecode(response.body);
+      MasterScreenVertical.setList(listUnidades);
       setState(() {
         itemUnidade = listUnidades[0]['UNIDADE']; // Isto redefinia o valor a cada reconstrução
       });
@@ -398,6 +406,5 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
       print('Erro: $e');
     }
   }
-
 
 }

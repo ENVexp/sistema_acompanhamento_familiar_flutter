@@ -28,7 +28,7 @@ class UserDialogs {
                 icon: Icon(Icons.edit, color: AppColors.monteAlegreGreen),
                 onPressed: () {
                   Navigator.pop(context);
-                  _showEditUserDialog(context, user);
+                  showEditUserDialog(context, user);
                 },
               ),
             ],
@@ -124,7 +124,7 @@ class UserDialogs {
     );
   }
 
-  static void _showEditUserDialog(BuildContext context, User user) {
+  static void showEditUserDialog(BuildContext context, User user) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

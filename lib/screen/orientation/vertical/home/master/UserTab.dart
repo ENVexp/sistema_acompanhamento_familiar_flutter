@@ -1,3 +1,5 @@
+import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/master/UserDialogs.dart';
+import 'package:acompanhamento_familiar/screen/orientation/vertical/home/master/MasterScreenVertical.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,6 +8,7 @@ import '../../../../../model/Unidade.dart';
 import '../../../../../model/User.dart';
 import '../../../../../themes/app_colors.dart';
 import '../../../horizontal/home/master/UserDataController.dart';
+import '../../../unspecified/login/PasswordRecoveryService.dart';
 
 class UserTab extends StatefulWidget {
   @override
@@ -20,6 +23,14 @@ class _UserTabState extends State<UserTab> {
   final ScrollController _scrollController = ScrollController();
   List<Unidade> unidades = [];
   String selectedUnidade = 'TODAS';  // "TODAS" como valor padrão para exibir todos os usuários
+  final PasswordRecoveryService _passwordRecoveryService = PasswordRecoveryService();
+
+
+  var itemUnidade = "";
+  var itemType = UserType.VISUALIZACAO;
+  List<dynamic> listUnidades = [];
+  List<dynamic> listType = [];
+
 
   @override
   void initState() {
@@ -258,14 +269,37 @@ class _UserTabState extends State<UserTab> {
                     ),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: IconButton(
-                        icon: Icon(Icons.close, color: Colors.grey),
-                        onPressed: () {
-                          setState(() {
-                            selectedUser = null;
-                          });
-                        },
-                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit, color: Colors.grey),
+                            onPressed: () {
+                              showEditUserBottomSheet(context, selectedUser!);
+                              setState(() {
+                                selectedUser = null;
+                              });
+                              },
+                          ),
+                          SizedBox(height: 4),
+                          IconButton(
+                            icon: Icon(Icons.mail_lock, color: Colors.grey),
+                            onPressed: () async {
+                               await _passwordRecoveryService.recuperarSenha(selectedUser!.email, context);
+                                // selectedUser = null;
+                            },
+                          ),
+                          SizedBox(height: 4),
+                          IconButton(
+                            icon: Icon(Icons.close, color: Colors.grey),
+                            onPressed: () {
+                              setState(() {
+                                selectedUser = null;
+                              });
+                            },
+                          ),
+                        ],
+                      )
                     ),
                   ],
                 ),
@@ -295,4 +329,237 @@ class _UserTabState extends State<UserTab> {
       ],
     );
   }
+
+
+
+  void _mostrarSnackBar(String mensagem, {required bool isSuccess}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          mensagem,
+          style: TextStyle(fontFamily: 'ProductSansMedium', color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: isSuccess ? AppColors.monteAlegreGreen : Colors.red,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void showEditUserBottomSheet(BuildContext context, User userEdit) {
+    final TextEditingController _controleNome = TextEditingController();
+    final TextEditingController _controleEMail = TextEditingController();
+    final TextEditingController _controleSenha = TextEditingController();
+
+    _controleNome.text = userEdit.nome;
+    _controleEMail.text = userEdit.email;
+    _controleSenha.text = userEdit.senha;
+
+    setState(() {
+      itemType = userEdit.tipo;
+      itemUnidade = userEdit.unidade;
+    });
+
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (BuildContext contex, StateSetter setState){
+          return Container(
+            padding: EdgeInsets.all(20),
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Editar Usuário',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'ProductSansMedium',
+                    color: AppColors.monteAlegreGreen,
+                  ),
+                ),
+                SizedBox(height: 20),
+                _buildTextField('Nome',_controleNome, TextInputType.text),
+                _buildTextField('E-mail',_controleEMail,  TextInputType.emailAddress),
+                _buildTextField('Senha', _controleSenha, TextInputType.visiblePassword, isPassword: true),
+                _buildTextType(setState),
+                _buildTextUnidade(setState),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.monteAlegreGreen),
+                  onPressed: () {
+                    if(_controleNome.text.trim() == "" || _controleSenha.text.trim() == "" || _controleEMail.text.trim() == ""){
+                      SnackBar(
+                        content: Text('Preencha todos os campos!'),
+                        backgroundColor: Colors.red,
+                      );
+                    } else {
+                      // criarNovoUsuario(
+                      //     _controleEMail.text,
+                      //     _controleSenha.text,
+                      //     _controleNome.text,
+                      //     itemType,
+                      //     itemUnidade,
+                      //     "ativado"
+                      // );
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Criando novo usuário...'),
+                          backgroundColor: AppColors.monteAlegreGreen,
+                        ),
+                      );
+                    }
+                  },
+                  child: Text(
+                    'Salvar Usuário',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  Widget _buildTextUnidade(StateSetter setState) {
+    bool _isCoordenacao = (loggedUser?.tipo == UserType.COORDENACAO);
+    // controller.text = _isCoordenacao ? user.unidade : "";
+
+    if(_isCoordenacao){
+      itemUnidade = loggedUser!.unidade;
+      return SizedBox(height: 8);
+    } else {
+
+      /*  List<Map<String, dynamic>> mapUnidade = [];
+      Map<String, dynamic> m = {};
+        for (var unidade in listUnidade) {
+          m = {'ID': unidade['ID'], 'UNIDADE': unidade['UNIDADE']};
+          mapUnidade.add(m);
+        }*/
+
+      // List<DropdownMenuItem<String>> list = [];
+      // for (var unidade in listUnidade) {
+      //   list.add(DropdownMenuItem<String>(
+      //     value: unidade['UNIDADE'], // Define o valor como a unidade
+      //     child: Text(unidade['UNIDADE'],
+      //       style: TextStyle(color: Colors.black, fontFamily: 'ProductSansMedium'),
+      //       ),
+      //   )
+      //   );
+      // }
+
+      listUnidades = [];
+      listUnidades.addAll(MasterScreenVertical.listShared);
+      print("TAMMANHO DA LISTA ${listUnidades.length}");
+
+      // Prepara os itens do DropdownButton
+      List<DropdownMenuItem<String>> dropdownItems = listUnidades.map<DropdownMenuItem<String>>((unidade) {
+        return DropdownMenuItem<String>(
+          value: unidade['UNIDADE'],
+          child: Text(
+            unidade['UNIDADE'],
+            style: TextStyle(color: Colors.black, fontFamily: 'ProductSansMedium'),
+          ),
+        );
+      }).toList();
+
+      // String _item = "${listUnidade[0]['UNIDADE']}";
+      return Padding(padding: const EdgeInsets.symmetric(vertical: 8.0),
+          // return Padding(padding: const EdgeInsets.all(16),
+          child: DropdownButton(
+            // hint: Text('Selecione uma Unidade'),
+              value: itemUnidade, // Valor inicial do dropdown
+              items: dropdownItems,
+              onChanged: (value){
+                setState(() {
+                  itemUnidade = value.toString();
+                  print(itemUnidade  + " selecionado");// Atualiza o valor selecionado
+                });
+              })
+      );
+    }
+  }
+
+  Widget _buildTextType(StateSetter setState) {
+    listType = [UserType.VISUALIZACAO, UserType.RECEPCAO, UserType.TECNICO, UserType.COORDENACAO];
+    if (loggedUser?.tipo == UserType.MASTER) listType.add(UserType.MASTER);
+    if (loggedUser?.tipo == UserType.DESENVOLVEDOR) listType.add(UserType.DESENVOLVEDOR);
+
+    print("LIIIIIIISSSSTTTTAAAA ${listType.length}");
+
+    /// Prepara os itens do DropdownButton
+    List<DropdownMenuItem<String>> dropdownItemsType = listType.map<DropdownMenuItem<String>>((type) {
+      return DropdownMenuItem<String>(
+        value: type,  // Usa o valor diretamente como String
+        child: Text(
+          type,  // Exibe o texto diretamente (já é String)
+          style: TextStyle(color: Colors.black, fontFamily: 'ProductSansMedium'),
+        ),
+      );
+    }).toList();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownButton<String>(
+        value: itemType, // Valor inicial do dropdown (deve ser String)
+        items: dropdownItemsType,
+        onChanged: (value) { // Tipo deve ser String
+          setState(() {
+            itemType = value!; // Atualiza o valor selecionado (String)
+            print(itemType + " selecionado"); // Imprime o valor selecionado
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, TextInputType keyboardType, {bool isPassword = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: AppColors.monteAlegreGreen, // Cor do cursor
+            selectionColor: Colors.greenAccent, // Cor do fundo da seleção (claro)
+            selectionHandleColor: AppColors.monteAlegreGreen, // Cor das alças de seleção (escuro)
+          ),
+        ),
+        child: TextField(
+          style: TextStyle( // Estilo do texto digitado
+            color: Colors.black, // Cor do texto digitado
+            fontFamily: 'ProductSansMedium', // Fonte personalizada
+          ),
+          obscureText: isPassword,
+          controller: controller,
+          keyboardType: keyboardType,
+          cursorColor: AppColors.monteAlegreGreen,
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: TextStyle(
+              color: AppColors.monteAlegreGreen,
+              fontFamily: 'ProductSansMedium',
+            ),
+            border: OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 }

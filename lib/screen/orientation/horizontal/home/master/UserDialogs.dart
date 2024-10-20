@@ -1,5 +1,7 @@
 // UserDialogs.dart
 
+import 'package:acompanhamento_familiar/contract/UserType.dart';
+import 'package:acompanhamento_familiar/modal/Unidade.dart';
 import 'package:flutter/material.dart';
 import 'package:acompanhamento_familiar/themes/app_colors.dart';
 import 'package:acompanhamento_familiar/modal/User.dart';
@@ -237,7 +239,11 @@ class UserDialogs {
     );
   }
 
-  static void showCreateUserBottomSheet(BuildContext context) {
+  static void showCreateUserBottomSheet(BuildContext context, var user, List<dynamic> listUnidades) {
+    final TextEditingController _controleNome = TextEditingController();
+    final TextEditingController _controleEMail = TextEditingController();
+    final TextEditingController _controleSenha = TextEditingController();
+    final TextEditingController _controleUnidade = TextEditingController();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -258,22 +264,29 @@ class UserDialogs {
                 ),
               ),
               SizedBox(height: 20),
-              _buildTextField('Nome', TextInputType.text),
-              _buildTextField('E-mail', TextInputType.emailAddress),
-              _buildTextField('Senha', TextInputType.visiblePassword, isPassword: true),
-              _buildTextField('Unidade', TextInputType.text),
-              _buildTextField('Tipo de Usuário', TextInputType.text),
+              _buildTextField('Nome',_controleNome, TextInputType.text),
+              _buildTextField('E-mail',_controleEMail,  TextInputType.emailAddress),
+              _buildTextField('Senha', _controleSenha, TextInputType.visiblePassword, isPassword: true),
+              _buildTextUnidade(_controleUnidade, user, listUnidades),
+              // _buildTextField('Tipo de Usuário', TextInputType.text),
               SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: AppColors.monteAlegreGreen),
                 onPressed: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  if(_controleNome.text.trim() == "" || _controleSenha.text.trim() == "" || _controleEMail.text.trim() == ""){
                     SnackBar(
-                      content: Text('Usuário criado com sucesso!'),
-                      backgroundColor: AppColors.monteAlegreGreen,
-                    ),
-                  );
+                      content: Text('Preencha todos os campos!'),
+                      backgroundColor: Colors.red,
+                    );
+                  } else {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Usuário criado com sucesso!'),
+                        backgroundColor: AppColors.monteAlegreGreen,
+                      ),
+                    );
+                  }
                 },
                 child: Text(
                   'Salvar Usuário',
@@ -294,11 +307,70 @@ class UserDialogs {
     );
   }
 
-  static Widget _buildTextField(String label, TextInputType keyboardType, {bool isPassword = false}) {
+  static Widget _buildTextUnidade(TextEditingController controller, User user, List<dynamic> listUnidade) {
+
+    bool _isCoordenacao = (user.tipo == UserType.COORDENACAO);
+    controller.text = _isCoordenacao ? user.unidade : "";
+
+    if(_isCoordenacao){
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: TextField(
+          controller: controller,
+          enabled: !_isCoordenacao,
+          decoration: InputDecoration(
+            labelText: 'Unidade',
+            labelStyle: TextStyle(color: AppColors.monteAlegreGreen, fontFamily: 'ProductSansMedium'),
+            border: OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+            ),
+          ),
+        ),
+      );
+    } else {
+
+    /*  List<Map<String, dynamic>> mapUnidade = [];
+      Map<String, dynamic> m = {};
+        for (var unidade in listUnidade) {
+          m = {'ID': unidade['ID'], 'UNIDADE': unidade['UNIDADE']};
+          mapUnidade.add(m);
+        }*/
+
+      List<DropdownMenuItem<String>> list = [];
+      for (var unidade in listUnidade) {
+        list.add(DropdownMenuItem<String>(
+          value: unidade['UNIDADE'], // Define o valor como a unidade
+          child: Text(unidade['UNIDADE'],
+            style: TextStyle(color: Colors.black, fontFamily: 'ProductSansMedium'),
+            ),
+        )
+        );
+      }
+
+      // String _item = "${listUnidade[0]['UNIDADE']}";
+      String? _item = list[0].value;
+      return Padding(padding: const EdgeInsets.symmetric(vertical: 8.0),
+      // return Padding(padding: const EdgeInsets.all(16),
+    child: DropdownButton(
+      // hint: Text('Selecione uma Unidade'),
+        value: _item, // Valor inicial do dropdown
+        items: list,
+        onChanged: (value){
+          _item = value.toString();
+
+        })
+      );
+    }
+  }
+
+
+  static Widget _buildTextField(String label, TextEditingController controller, TextInputType keyboardType, {bool isPassword = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
         obscureText: isPassword,
+        controller: controller,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: AppColors.monteAlegreGreen, fontFamily: 'ProductSansMedium'),

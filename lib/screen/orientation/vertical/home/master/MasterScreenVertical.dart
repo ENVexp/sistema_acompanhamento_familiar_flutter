@@ -1,11 +1,19 @@
+import 'dart:convert';
+
+import 'package:acompanhamento_familiar/modal/Unidade.dart';
+import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/master/UserDialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../contract/Url.dart';
 import 'UserTab.dart';
 import 'UnitTab.dart';
 import 'BackupTab.dart';
+import 'package:http/http.dart' as http;
 import '../../../../../themes/app_colors.dart';
 import '../../../../../modal/User.dart';
 import '../../../../../contract/UserType.dart';
+import '../../../horizontal/home/master/UserDialogs.dart';
+
 
 class MasterScreenVertical extends StatefulWidget {
   @override
@@ -16,17 +24,30 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
   TabController? _tabController;
   User? loggedUser;
   bool isCoordination = false;
+  List<dynamic> listUnidades = [];
 
   @override
   void initState() {
     super.initState();
     _initializeUser();
+    _loadUnidaes();
+  }
+
+  Future<void> _loadUnidaes() async {
+    http.Response response = await http
+        .get(Uri.parse('${Url.URL_USERS_UNIDADES}?action=todasUnidades'))
+        .timeout(const Duration(seconds: 30));
+    try{
+      listUnidades = jsonDecode(response.body);
+      print("unidades baixadas PPPPPPPAAAAAAAH ${listUnidades.length}");
+    } catch (e){
+      print('EEEEEERRRRROOOOOOO ${e.toString()}');
+    }
   }
 
   Future<void> _initializeUser() async {
     loggedUser = await User.loadUser(); // Carrega o usuário logado
     isCoordination = loggedUser?.tipo == UserType.COORDENACAO;
-
     // Inicializa o TabController após a verificação de tipo do usuário
     setState(() {
       _tabController = TabController(
@@ -35,6 +56,8 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
       );
     });
   }
+
+
 
   @override
   void dispose() {
@@ -93,19 +116,21 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
           ),
         ],
       ),
-      floatingActionButton: _showFab() ? _buildFab() : null,
+      // floatingActionButton: _showFab() ? _buildFab() : null,
+      floatingActionButton: _buildFab(),
     );
   }
 
-  bool _showFab() {
-    return !isCoordination && (_tabController!.index == 0 || _tabController!.index == 1);
-  }
+  // bool _showFab() {
+  //   return !isCoordination && (_tabController!.index == 0 || _tabController!.index == 1);
+  // }
 
   Widget _buildFab() {
     return FloatingActionButton(
       onPressed: () {
         if (_tabController!.index == 0) {
           // Ação de criar usuário
+            UserDialogs.showCreateUserBottomSheet(context, loggedUser, listUnidades);
         } else if (_tabController!.index == 1 && !isCoordination) {
           // Ação de adicionar unidade
         }

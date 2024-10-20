@@ -145,9 +145,10 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> {
       ),
       floatingActionButton: _isFabVisible
           ? FloatingActionButton(
-        onPressed: () => UserDialogs.showCreateUserBottomSheet(context),
-        backgroundColor: AppColors.monteAlegreGreen,
-        child: Icon(Icons.add, color: Colors.white),
+        onPressed: (){},
+        // onPressed: () => UserDialogs.showCreateUserBottomSheet(context, load),
+        // backgroundColor: AppColors.monteAlegreGreen,
+        // child: Icon(Icons.add, color: Colors.white),
       )
           : null,
     );

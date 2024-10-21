@@ -2,7 +2,9 @@ import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/maste
 import 'package:acompanhamento_familiar/screen/orientation/vertical/home/master/MasterScreenVertical.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
+import '../../../../../contract/Url.dart';
 import '../../../../../contract/UserType.dart';
 import '../../../../../model/Unidade.dart';
 import '../../../../../model/User.dart';
@@ -30,6 +32,9 @@ class _UserTabState extends State<UserTab> {
   var itemType = UserType.VISUALIZACAO;
   List<dynamic> listUnidades = [];
   List<dynamic> listType = [];
+  String estadoEdit = "";
+  List<bool> isSelected = [true, false]; // Inicialmente "Ativado" selecionado
+
 
 
   @override
@@ -358,6 +363,10 @@ class _UserTabState extends State<UserTab> {
     setState(() {
       itemType = userEdit.tipo;
       itemUnidade = userEdit.unidade;
+      estadoEdit = userEdit.estado;
+
+      if(estadoEdit == "ativado") isSelected = [true, false];
+      else isSelected = [false, true];
     });
 
 
@@ -366,73 +375,123 @@ class _UserTabState extends State<UserTab> {
       isScrollControlled: true,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (BuildContext contex, StateSetter setState){
-          return Container(
-            padding: EdgeInsets.all(20),
-            height: MediaQuery.of(context).size.height * 0.8,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Editar Usuário',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'ProductSansMedium',
-                    color: AppColors.monteAlegreGreen,
+          return SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              height: MediaQuery.of(context).size.height * 0.95,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Editar Usuário',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'ProductSansMedium',
+                      color: AppColors.monteAlegreGreen,
+                    ),
                   ),
-                ),
-                SizedBox(height: 20),
-                _buildTextField('Nome',_controleNome, TextInputType.text),
-                _buildTextField('E-mail',_controleEMail,  TextInputType.emailAddress),
-                _buildTextField('Senha', _controleSenha, TextInputType.visiblePassword, isPassword: true),
-                _buildTextType(setState),
-                _buildTextUnidade(setState),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.monteAlegreGreen),
-                  onPressed: () {
-                    if(_controleNome.text.trim() == "" || _controleSenha.text.trim() == "" || _controleEMail.text.trim() == ""){
-                      SnackBar(
-                        content: Text('Preencha todos os campos!'),
-                        backgroundColor: Colors.red,
-                      );
-                    } else {
-                      // criarNovoUsuario(
-                      //     _controleEMail.text,
-                      //     _controleSenha.text,
-                      //     _controleNome.text,
-                      //     itemType,
-                      //     itemUnidade,
-                      //     "ativado"
-                      // );
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
+                  SizedBox(height: 20),
+                  _buildTextField('Nome',_controleNome, TextInputType.text),
+                  _buildTextField('E-mail',_controleEMail,  TextInputType.emailAddress),
+                  _buildTextField('Senha', _controleSenha, TextInputType.visiblePassword, isPassword: true),
+                  _buildTextType(setState),
+                  _buildTextUnidade(setState),
+                  _radioEstado(),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.monteAlegreGreen),
+                    onPressed: () {
+                      if(_controleNome.text.trim() == "" || _controleSenha.text.trim() == "" || _controleEMail.text.trim() == ""){
                         SnackBar(
-                          content: Text('Criando novo usuário...'),
-                          backgroundColor: AppColors.monteAlegreGreen,
-                        ),
-                      );
-                    }
-                  },
-                  child: Text(
-                    'Salvar Usuário',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                          content: Text('Preencha todos os campos!'),
+                          backgroundColor: Colors.red,
+                        );
+                      } else {
+                        atualizarUsuario(
+                          userEdit.id,
+                            _controleEMail.text,
+                            _controleSenha.text,
+                            _controleNome.text,
+                            itemType,
+                            itemUnidade,
+                            estadoEdit
+                        );
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Atualizando usuário...'),
+                            backgroundColor: AppColors.monteAlegreGreen,
+                          ),
+                        );
+                      }
+                    },
+                    child: Text(
+                      'Salvar Usuário',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    'Cancelar',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      'Cancelar',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 10),
+                ],
+              ),
             ),
           );
         });
       },
     );
   }
+
+
+  Future<void> atualizarUsuario(
+      String id,
+      String? email,
+      String? senha,
+      String? nome,
+      String? tipo,
+      String? unidade,
+      String? estado,
+      ) async {
+    // URL base de deploy
+    // Montar os parâmetros na URL
+    String url = '${Url.URL_EDITAR_USER}?id=$id';
+    if (email != null) url += '&email=$email';
+    if (senha != null) url += '&senha=$senha';
+    if (nome != null) url += '&nome=$nome';
+    if (tipo != null) url += '&tipo=$tipo';
+    if (unidade != null) url += '&unidade=$unidade';
+    if (estado != null) url += '&estado=$estado';
+
+    try {
+      // Fazer a requisição GET
+      final response = await http.get(Uri.parse(url));
+
+      // Verificar o status da requisição
+      if (response.statusCode == 200) {
+        _mostrarSnackBar('Atualização bem-sucedida', isSuccess: true);
+        print('Atualização bem-sucedida: ${response.body}');
+
+        final userDataController = Provider.of<UserDataController>(context, listen: false);
+
+        if(loggedUser?.tipo == UserType.COORDENACAO)  await userDataController.loadUsersByUnidade(loggedUser!.unidade!);
+        else await userDataController.loadUsersAndUnidades(); // Carrega usuários e unidades juntos
+
+      } else {
+        _mostrarSnackBar('Ops... algo deu errado!', isSuccess: false);
+        print('Erro ao atualizar: ${response.statusCode}');
+      }
+    } catch (e) {
+      _mostrarSnackBar('Erro ao atualizar', isSuccess: false);
+      print('Erro: $e');
+    }
+  }
+
 
   Widget _buildTextUnidade(StateSetter setState) {
     bool _isCoordenacao = (loggedUser?.tipo == UserType.COORDENACAO);
@@ -559,6 +618,60 @@ class _UserTabState extends State<UserTab> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _radioEstado(){
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Lista que controla o estado de ativado/desativado
+        StatefulBuilder(
+          builder: (context, setState) {
+
+            return ToggleButtons(
+              fillColor: isSelected[0] ?  AppColors.monteAlegreGreen : Colors.red[500], // Cor de fundo quando selecionado
+              selectedColor: Colors.green, // Cor do texto quando "Ativado"
+              color: Colors.red, // Cor do texto quando "Desativado"
+              isSelected: isSelected,
+              onPressed: (index) {
+                setState(() {
+                  if(index == 0){
+                    isSelected = [true, false];
+                    estadoEdit = "ativado";
+                  } else {
+                    isSelected = [false, true];
+                    estadoEdit = "desativado";
+                  }
+                });
+              },
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("Ativado",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: isSelected[0] ? Colors.white : Colors.grey,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Desativado",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: isSelected[1] ? Colors.white : Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 

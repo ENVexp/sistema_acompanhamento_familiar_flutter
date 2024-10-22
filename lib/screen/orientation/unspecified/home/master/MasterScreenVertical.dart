@@ -62,6 +62,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
 
   Future<void> _initializeUser() async {
     loggedUser = await User.loadUser(); // Carrega o usuário logado
+    print("USUARIO LOGADO ${loggedUser.toString()}");
     isCoordination = loggedUser?.tipo == UserType.COORDENACAO;
     // Inicializa o TabController após a verificação de tipo do usuário
     setState(() {
@@ -300,6 +301,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
       listType.add(UserType.DESENVOLVEDOR);
     }
 
+    print("L    ${loggedUser?.tipo} e ${UserType.DESENVOLVEDOR} sao ${loggedUser?.tipo == UserType.DESENVOLVEDOR}");
     print("LIIIIIIISSSSTTTTAAAA ${listType.length}");
 
     /// Prepara os itens do DropdownButton

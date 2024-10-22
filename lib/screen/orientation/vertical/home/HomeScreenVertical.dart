@@ -5,7 +5,6 @@ import 'package:acompanhamento_familiar/screen/orientation/vertical/home/pendent
 import 'package:acompanhamento_familiar/screen/orientation/vertical/home/perfil/PerfilScreenVertical.dart';
 import 'package:acompanhamento_familiar/screen/orientation/vertical/home/recepcao/RecepcaoScreenVertical.dart';
 import 'package:acompanhamento_familiar/screen/orientation/vertical/home/inicio/InicioScreenVertical.dart';
-import 'package:acompanhamento_familiar/screen/orientation/vertical/home/master/MasterScreenVertical.dart';
 import 'package:acompanhamento_familiar/screen/orientation/vertical/home/desenvolvedor/DesenvolvedorScreenVertical.dart';
 import '../../../../contract/UserType.dart';
 import '../../../../main.dart';
@@ -13,6 +12,7 @@ import '../../../../model/User.dart';
 import '../../../../shared/storage_service.dart';
 import '../../../../themes/app_colors.dart';
 import '../../unspecified/LoadUser.dart';
+import '../../unspecified/home/master/MasterScreenVertical.dart';
 
 enum Screens { inicio, recepcao, pendentes, master, desenvolvedor, perfil }
 

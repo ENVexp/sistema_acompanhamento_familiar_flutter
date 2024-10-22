@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/master/UserDataController.dart';
+import 'package:acompanhamento_familiar/screen/orientation/unspecified/home/master/UserDataController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:window_manager/window_manager.dart';

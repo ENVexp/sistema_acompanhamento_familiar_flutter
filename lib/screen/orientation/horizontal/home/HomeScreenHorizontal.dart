@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 
 import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/desenvolvedor/DesenvolvedorScreenHorizontal.dart';
 import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/inicio/InicioScreenHorizontal.dart';
-import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/master/MasterScreenHorizontal.dart';
 import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/pendentes/PendentesScreenHorizontal.dart';
 import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/recepcao/RecepcaoScreenHorizontal.dart';
 
@@ -16,6 +15,7 @@ import '../../../../model/User.dart';
 import '../../../../shared/storage_service.dart';
 import '../../../../themes/app_colors.dart';
 import '../../unspecified/LoadUser.dart';
+import '../../unspecified/home/master/MasterScreenVertical.dart';
 
 enum Screens { inicio, recepcao, pendentes, master, desenvolvedor }
 
@@ -52,7 +52,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
     Screens.inicio: InicioScreenHorizontal(),
     Screens.recepcao: RecepcaoScreenHorizontal(),
     Screens.pendentes: PendentesScreenHorizontal(),
-    Screens.master: MasterScreenHorizontal(),
+    Screens.master: MasterScreenVertical(),
     Screens.desenvolvedor: DesenvolvedorScreenHorizontal(),
   };
 

@@ -1,16 +1,16 @@
-import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/master/UserDialogs.dart';
-import 'package:acompanhamento_familiar/screen/orientation/vertical/home/master/MasterScreenVertical.dart';
+import 'package:acompanhamento_familiar/screen/orientation/unspecified/home/master/UserDialogs.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
-import '../../../../../contract/Url.dart';
-import '../../../../../contract/UserType.dart';
-import '../../../../../model/Unidade.dart';
-import '../../../../../model/User.dart';
-import '../../../../../themes/app_colors.dart';
-import '../../../horizontal/home/master/UserDataController.dart';
-import '../../../unspecified/login/PasswordRecoveryService.dart';
+import '../../../../../../contract/Url.dart';
+import '../../../../../../contract/UserType.dart';
+import '../../../../../../model/Unidade.dart';
+import '../../../../../../model/User.dart';
+import '../../../../../../themes/app_colors.dart';
+import '../UserDataController.dart';
+import '../../../login/PasswordRecoveryService.dart';
+import '../MasterScreenVertical.dart';
 
 class UserTab extends StatefulWidget {
   @override
@@ -318,7 +318,7 @@ class _UserTabState extends State<UserTab> {
             itemBuilder: (context, index) {
               final user = userDataController.filteredUsers[index];
               return ListTile(
-                title: Text(user.nome.isNotEmpty ? user.nome : 'Nome não disponível',
+                title: Text(user.nome.isNotEmpty ? getFirstName(user.nome) : 'Nome não disponível',
                     style: TextStyle(fontFamily: 'ProductSansMedium')),
                 subtitle: Text(user.email.isNotEmpty ? user.email : 'Email não disponível'),
                 trailing: Text(user.unidade.isNotEmpty ? user.unidade : 'Unidade não disponível'),
@@ -554,8 +554,12 @@ class _UserTabState extends State<UserTab> {
 
   Widget _buildTextType(StateSetter setState) {
     listType = [UserType.VISUALIZACAO, UserType.RECEPCAO, UserType.TECNICO, UserType.COORDENACAO];
-    if (loggedUser?.tipo == UserType.MASTER) listType.add(UserType.MASTER);
-    if (loggedUser?.tipo == UserType.DESENVOLVEDOR) listType.add(UserType.DESENVOLVEDOR);
+    if (loggedUser?.tipo == UserType.MASTER) {
+      listType.add(UserType.MASTER);
+    } else if (loggedUser?.tipo == UserType.DESENVOLVEDOR) {
+      listType.add(UserType.MASTER);
+      listType.add(UserType.DESENVOLVEDOR);
+    }
 
     print("LIIIIIIISSSSTTTTAAAA ${listType.length}");
 
@@ -673,6 +677,10 @@ class _UserTabState extends State<UserTab> {
         ),
       ],
     );
+  }
+
+  String getFirstName(String fullName) {
+    return fullName.split(' ').first;
   }
 
 }

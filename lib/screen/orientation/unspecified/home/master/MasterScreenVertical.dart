@@ -8,10 +8,10 @@ import '../../../../../contract/Url.dart';
 import '../../../../../contract/UserType.dart';
 import '../../../../../model/User.dart';
 import '../../../../../themes/app_colors.dart';
-import '../../../horizontal/home/master/UserDataController.dart';
-import 'BackupTab.dart';
-import 'UnitTab.dart';
-import 'UserTab.dart';
+import 'UserDataController.dart';
+import 'tab/BackupTab.dart';
+import 'tab/UnitTab.dart';
+import 'tab/UserTab.dart';
 
 
 class MasterScreenVertical extends StatefulWidget {
@@ -292,8 +292,13 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
 
   Widget _buildTextType(StateSetter setState) {
     listType = [UserType.VISUALIZACAO, UserType.RECEPCAO, UserType.TECNICO, UserType.COORDENACAO];
-    if (loggedUser?.tipo == UserType.MASTER) listType.add(UserType.MASTER);
-    if (loggedUser?.tipo == UserType.DESENVOLVEDOR) listType.add(UserType.DESENVOLVEDOR);
+    if (loggedUser?.tipo == UserType.MASTER) {
+      listType.add(UserType.MASTER);
+    }
+      if (loggedUser?.tipo == UserType.DESENVOLVEDOR) {
+      listType.add(UserType.MASTER);
+      listType.add(UserType.DESENVOLVEDOR);
+    }
 
     print("LIIIIIIISSSSTTTTAAAA ${listType.length}");
 

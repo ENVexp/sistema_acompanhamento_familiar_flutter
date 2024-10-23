@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../contract/Url.dart';
 import '../../../../../contract/UserType.dart';
+import '../../../../../model/Unidade.dart';
 import '../../../../../model/User.dart';
 import '../../../../../themes/app_colors.dart';
 import '../../../unspecified/home/master/UserDataController.dart';
@@ -29,6 +30,7 @@ class MasterScreenHorizontal extends StatefulWidget {
 
 class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with SingleTickerProviderStateMixin {
   TabController? _tabController;
+  final TextEditingController _newUnidadeController = TextEditingController();
   User? loggedUser;
   bool isCoordination = false;
   List<dynamic> listUnidades = [];
@@ -36,6 +38,8 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
   var itemUnidade = "";
   var itemType = UserType.VISUALIZACAO;
   UserTabHorizontal userTab = UserTabHorizontal();
+  List<Unidade> unidadesListTab = [];
+
 
   @override
   void initState() {
@@ -152,6 +156,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
           if(listUnidades.length > 0)  showCreateUserBottomSheet(context, loggedUser, listUnidades);
         } else if (_tabController!.index == 1 && !isCoordination) {
           // Ação de adicionar unidade
+          showCreateUnidadeBottomSheet(context);
         }
       },
       backgroundColor: AppColors.monteAlegreGreen,
@@ -171,7 +176,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
         return StatefulBuilder(builder: (BuildContext contex, StateSetter setState){
           return Container(
             padding: EdgeInsets.all(20),
-            height: MediaQuery.of(context).size.height * 0.8,
+            height: MediaQuery.of(context).size.height * 1,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -223,6 +228,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
+                SizedBox(height: 5),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(
@@ -415,5 +421,120 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
       print('Erro: $e');
     }
   }
+
+  // Método para exibir o BottomSheet e criar nova unidade
+  void showCreateUnidadeBottomSheet(BuildContext context) {
+    if(!UnitTab.getIsLoadingShared() ){
+      _newUnidadeController.text = '';
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return Padding(
+            // height: MediaQuery.of(context),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height * 0.1,
+              top: 20, left: 20, right: 20,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Criar Nova Unidade',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.monteAlegreGreen,
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: _newUnidadeController,
+                  decoration: InputDecoration(
+                    labelText: 'Nome da Unidade',
+                    labelStyle: TextStyle(color: AppColors.monteAlegreGreen),
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.monteAlegreGreen),
+                  onPressed: () {
+                    unidadesListTab = [];
+                    unidadesListTab = UnitTab.getListUnidades();
+                    _createUnidade(_newUnidadeController.text);
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Salvar Unidade',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                )
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  // Método para criar uma nova unidade e atualizar a lista
+  Future<void> _createUnidade(String unidadeName) async {
+    if (unidadeName.isEmpty) return;
+
+    if(Unidade.isContains(unidadesListTab, unidadeName)){
+      _mostrarSnackBar("Unidade já existente!", isSuccess: false);
+      return;
+    } else {
+      try {
+        final response = await http.get(Uri.parse('${Url.URL_UNIDADES}?action=createUnidade&unidadeName=$unidadeName'));
+
+        if (response.statusCode == 200) {
+          final newUnidade = Unidade.fromJson(jsonDecode(response.body));
+          setState(() {
+            UnitTab.addUnidade(newUnidade);
+          });
+          _newUnidadeController.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Unidade criada com sucesso!'), backgroundColor: AppColors.monteAlegreGreen),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erro ao criar unidade'), backgroundColor: Colors.red),
+          );
+        }
+      } catch (error) {
+        print("Erro ao criar unidade: $error");
+      }
+    }
+
+  }
+
+  void _mostrarSnackBar(String mensagem, {required bool isSuccess}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          mensagem,
+          style: TextStyle(fontFamily: 'ProductSansMedium', color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: isSuccess ? AppColors.monteAlegreGreen : Colors.red,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
 
 }

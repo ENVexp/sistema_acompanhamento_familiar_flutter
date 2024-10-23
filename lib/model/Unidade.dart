@@ -52,4 +52,11 @@ class Unidade {
   String toString() {
     return 'Unidade{id: $_id, nome: $_nome}';
   }
+
+  static isContains(List<Unidade> listUnidade, String unidade){
+    for(Unidade u in listUnidade){
+      if(u.nome == unidade) return true;
+      return false;
+    }
+  }
 }

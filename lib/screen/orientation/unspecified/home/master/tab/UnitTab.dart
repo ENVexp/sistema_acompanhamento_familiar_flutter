@@ -7,14 +7,26 @@ import '../../../../../../model/Unidade.dart';
 import '../../../../../../contract/Url.dart'; // Importando a constante de URL
 
 class UnitTab extends StatefulWidget {
+  static getListUnidades(){
+    return _UnitTabState.unidadeShared;
+  }
+  static getIsLoadingShared(){
+    return _UnitTabState.isLoadingShared;
+  }
+  static addUnidade(Unidade unid){
+    _UnitTabState.unidades.add(unid);
+  }
+
   @override
   _UnitTabState createState() => _UnitTabState();
 }
 
 class _UnitTabState extends State<UnitTab> {
-  List<Unidade> unidades = [];
+  static List<Unidade> unidades = [];
   bool isLoading = true;
+  static bool isLoadingShared = true;
   final TextEditingController _newUnidadeController = TextEditingController();
+  static  List<Unidade> unidadeShared  = [];
 
   @override
   void initState() {
@@ -28,21 +40,25 @@ class _UnitTabState extends State<UnitTab> {
       final response = await http.get(Uri.parse('${Url.URL_UNIDADES}?action=listUnidades'));
 
       if (response.statusCode == 200) {
-        List<dynamic> data = jsonDecode(response.body);
+        List<dynamic> data = await jsonDecode(response.body);
         setState(() {
           unidades = data.map((json) => Unidade.fromJson(json)).toList();
+          unidadeShared = data.map((json) => Unidade.fromJson(json)).toList();
           isLoading = false;
+          isLoadingShared = false;
         });
       } else {
         print("Erro ao carregar unidades: ${response.statusCode}");
         setState(() {
           isLoading = false;
+          isLoadingShared = false;
         });
       }
     } catch (error) {
       print("Erro ao buscar unidades: $error");
       setState(() {
         isLoading = false;
+        isLoadingShared = false;
       });
     }
   }

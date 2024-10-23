@@ -388,7 +388,7 @@ class _UserTabHorizontalState extends State<UserTabHorizontal> {
           return SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.all(20),
-              height: MediaQuery.of(context).size.height * 0.95,
+              height: MediaQuery.of(context).size.height * 1,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -441,6 +441,7 @@ class _UserTabHorizontalState extends State<UserTabHorizontal> {
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                   ),
+                  SizedBox(height: 5),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(

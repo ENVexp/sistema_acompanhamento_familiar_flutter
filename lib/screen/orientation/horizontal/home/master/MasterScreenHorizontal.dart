@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/master/tab/UserTabHorizontal.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -8,13 +9,13 @@ import '../../../../../contract/Url.dart';
 import '../../../../../contract/UserType.dart';
 import '../../../../../model/User.dart';
 import '../../../../../themes/app_colors.dart';
-import 'UserDataController.dart';
-import 'tab/BackupTab.dart';
-import 'tab/UnitTab.dart';
-import 'tab/UserTab.dart';
+import '../../../unspecified/home/master/UserDataController.dart';
+import '../../../unspecified/home/master/tab/BackupTab.dart';
+import '../../../unspecified/home/master/tab/UnitTab.dart';
+import '../HomeScreenHorizontal.dart';
 
 
-class MasterScreenVertical extends StatefulWidget {
+class MasterScreenHorizontal extends StatefulWidget {
   static List<dynamic> listShared = [];
 
   static setList(List<dynamic> list){
@@ -23,10 +24,10 @@ class MasterScreenVertical extends StatefulWidget {
   }
 
   @override
-  _MasterScreenVerticalState createState() => _MasterScreenVerticalState();
+  _MasterScreenHorizontalState createState() => _MasterScreenHorizontalState();
 }
 
-class _MasterScreenVerticalState extends State<MasterScreenVertical> with SingleTickerProviderStateMixin {
+class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with SingleTickerProviderStateMixin {
   TabController? _tabController;
   User? loggedUser;
   bool isCoordination = false;
@@ -34,7 +35,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
   List<dynamic> listType = [];
   var itemUnidade = "";
   var itemType = UserType.VISUALIZACAO;
-  UserTab userTab = UserTab();
+  UserTabHorizontal userTab = UserTabHorizontal();
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
         .timeout(const Duration(seconds: 30));
     try{
       listUnidades = jsonDecode(response.body);
-      MasterScreenVertical.setList(listUnidades);
+      MasterScreenHorizontal.setList(listUnidades);
       setState(() {
         itemUnidade = listUnidades[0]['UNIDADE']; // Isto redefinia o valor a cada reconstrução
       });
@@ -61,7 +62,8 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
   }
 
   Future<void> _initializeUser() async {
-    loggedUser = await User.loadUser(); // Carrega o usuário logado
+    // loggedUser = await User.loadUser(); // Carrega o usuário logado
+    loggedUser =  HomeScreenHorizontal.getUserLog(); // Carrega o usuário logado
     print("USUARIO LOGADO ${loggedUser.toString()}");
     isCoordination = loggedUser?.tipo == UserType.COORDENACAO;
     // Inicializa o TabController após a verificação de tipo do usuário

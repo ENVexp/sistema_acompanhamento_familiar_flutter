@@ -1,4 +1,4 @@
-import 'package:acompanhamento_familiar/screen/orientation/unspecified/home/master/UserDialogs.dart';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -8,16 +8,17 @@ import '../../../../../../contract/UserType.dart';
 import '../../../../../../model/Unidade.dart';
 import '../../../../../../model/User.dart';
 import '../../../../../../themes/app_colors.dart';
-import '../UserDataController.dart';
-import '../../../login/PasswordRecoveryService.dart';
-import '../MasterScreenVertical.dart';
+import '../../../../unspecified/home/master/UserDataController.dart';
+import '../../../../unspecified/login/PasswordRecoveryService.dart';
+import '../../HomeScreenHorizontal.dart';
+import '../MasterScreenHorizontal.dart';
 
-class UserTab extends StatefulWidget {
+class UserTabHorizontal extends StatefulWidget {
   @override
-  _UserTabState createState() => _UserTabState();
+  _UserTabHorizontalState createState() => _UserTabHorizontalState();
 }
 
-class _UserTabState extends State<UserTab> {
+class _UserTabHorizontalState extends State<UserTabHorizontal> {
   User? selectedUser;
   String searchQuery = '';
   User? loggedUser;
@@ -44,7 +45,9 @@ class _UserTabState extends State<UserTab> {
   }
 
   Future<void> _initializeUser() async {
-    loggedUser = await User.loadUser();
+    // loggedUser = await User.loadUser();
+    loggedUser =  HomeScreenHorizontal.getUserLog(); // Carrega o usuário logado
+
     print('Usuário logado: ${loggedUser?.nome}, Tipo: ${loggedUser?.tipo}');
 
     setState(() {
@@ -277,15 +280,7 @@ class _UserTabState extends State<UserTab> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.edit, color: Colors.grey),
-                            onPressed: () {
-                              showEditUserBottomSheet(context, selectedUser!);
-                              setState(() {
-                                selectedUser = null;
-                              });
-                              },
-                          ),
+                          editUser(selectedUser!),
                           SizedBox(height: 4),
                           IconButton(
                             icon: Icon(Icons.mail_lock, color: Colors.grey),
@@ -333,6 +328,21 @@ class _UserTabState extends State<UserTab> {
         ),
       ],
     );
+  }
+
+  Widget editUser(User user) {
+    if(user.tipo != UserType.DESENVOLVEDOR) {
+      return IconButton(
+        icon: Icon(Icons.edit, color: Colors.grey),
+        onPressed: () {
+          showEditUserBottomSheet(context, selectedUser!);
+          setState(() {
+            selectedUser = null;
+          });
+        },
+      );
+    }
+    return SizedBox(height: 4);
   }
 
 
@@ -521,7 +531,7 @@ class _UserTabState extends State<UserTab> {
       // }
 
       listUnidades = [];
-      listUnidades.addAll(MasterScreenVertical.listShared);
+      listUnidades.addAll(MasterScreenHorizontal.listShared);
       print("TAMMANHO DA LISTA ${listUnidades.length}");
 
       // Prepara os itens do DropdownButton

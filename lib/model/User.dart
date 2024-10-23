@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class User {
@@ -89,12 +91,66 @@ class User {
   // Carregando o usuário do SharedPreferences
   static Future<User?> loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-    String? u = prefs.getString('userString');
+    String? u =  await prefs.getString('userString');
+    print('UUUUUUU $u');
     if (u != null) {
       Map<String, dynamic> userMap = json.decode(u);
       return User.fromMap(userMap);
     }
     return null; // Retorna null se não houver usuário salvo
+  }
+
+
+  // Salvando o usuário no SharedPreferences
+  // static Future<void> saveUser(User u) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   String _id = u.id;
+  //   String _nome = u.nome;
+  //   String _email = u.email;
+  //   String _senha = u.senha;
+  //   String _tipo = u.tipo;
+  //   String _estado = u.estado;
+  //   String _unidade = u.unidade;
+  //
+  //   await prefs.setString('userId', _id);
+  //   await prefs.setString('userNome', _nome);
+  //   await prefs.setString('userEmail', _email);
+  //   await prefs.setString('userSenha', _senha);
+  //   await prefs.setString('userTipo', _tipo);
+  //   await prefs.setString('userEstado', _estado);
+  //   await prefs.setString('userUnidade', _unidade);
+  //
+  // }
+  //
+  //
+  // // Carregando o usuário do SharedPreferences
+  // static Future<User?> loadUser() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //
+  //   String? id = prefs.getString('userId') ?? '';
+  //   String? nome = prefs.getString('userNome') ?? '';
+  //   String? email = prefs.getString('userEmail') ?? '';
+  //   String? senha = prefs.getString('userSenha') ?? '';
+  //   String? tipo = prefs.getString('userTipo') ?? '';
+  //   String? estado = prefs.getString('userEstado') ?? '';
+  //   String? unidade = prefs.getString('userUnidade') ?? '';
+  //
+  //   return User(
+  //     id: id,
+  //     nome: nome,
+  //     email: email,
+  //     senha: senha,
+  //     tipo: tipo,
+  //     estado: estado,
+  //     unidade: unidade,
+  //   );
+  // }
+
+
+
+  static Future<File> getFile() async {
+    final diretorio = await getApplicationDocumentsDirectory();
+    return File("${diretorio.path}/userLog.json");
   }
 
   static Future<bool> isLoadUser() async {

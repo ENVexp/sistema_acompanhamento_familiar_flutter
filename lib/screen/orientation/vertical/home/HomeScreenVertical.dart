@@ -12,7 +12,7 @@ import '../../../../model/User.dart';
 import '../../../../shared/storage_service.dart';
 import '../../../../themes/app_colors.dart';
 import '../../unspecified/LoadUser.dart';
-import '../../unspecified/home/master/MasterScreenVertical.dart';
+import 'master/MasterScreenVertical.dart';
 
 enum Screens { inicio, recepcao, pendentes, master, desenvolvedor, perfil }
 

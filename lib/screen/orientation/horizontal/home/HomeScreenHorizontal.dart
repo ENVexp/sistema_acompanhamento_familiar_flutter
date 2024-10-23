@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:acompanhamento_familiar/screen/orientation/horizontal/home/master/MasterScreenHorizontal.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:http/http.dart' as http;
@@ -15,11 +16,15 @@ import '../../../../model/User.dart';
 import '../../../../shared/storage_service.dart';
 import '../../../../themes/app_colors.dart';
 import '../../unspecified/LoadUser.dart';
-import '../../unspecified/home/master/MasterScreenVertical.dart';
 
 enum Screens { inicio, recepcao, pendentes, master, desenvolvedor }
 
 class HomeScreenHorizontal extends StatefulWidget {
+
+  static getUserLog(){
+    return  _HomeScreenHorizontalState.userShared;
+  }
+
   @override
   _HomeScreenHorizontalState createState() => _HomeScreenHorizontalState();
 }
@@ -29,6 +34,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
   var _currentScreen = Screens.inicio;
   User? _cachedUser;
   OverlayEntry? _overlayEntry;
+  static User userShared = User();
 
   // Controladores para o diálogo de troca de senha
   final _currentPasswordController = TextEditingController();
@@ -52,7 +58,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
     Screens.inicio: InicioScreenHorizontal(),
     Screens.recepcao: RecepcaoScreenHorizontal(),
     Screens.pendentes: PendentesScreenHorizontal(),
-    Screens.master: MasterScreenVertical(),
+    Screens.master: MasterScreenHorizontal(),
     Screens.desenvolvedor: DesenvolvedorScreenHorizontal(),
   };
 
@@ -61,6 +67,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
     _cachedUser = await User.isLoadUser()
         ? await User.loadUser()
         : await LoadUser().carregarUsuario(await storageService.getUserEmail() ?? '');
+    userShared =  await _cachedUser!;
 
     if (_cachedUser != null && _cachedUser!.estado == "desativado") {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -426,6 +433,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
           );
         } else {
           final user = snapshot.data!;
+          // userShared = snapshot.data!;
           return _buildMainContent(user, screenSize);
         }
       },

@@ -31,6 +31,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
   TabController? _tabController;
   User? loggedUser;
   bool isCoordination = false;
+  bool isFab = true;
   List<dynamic> listUnidades = [];
   List<dynamic> listType = [];
   var itemUnidade = "";
@@ -74,6 +75,17 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
           length: isCoordination ? 2 : 3,
           vsync: this,
          );
+    });
+
+    // Listener para mudar o estado quando a aba muda
+    _tabController!.addListener(() {
+      if (_tabController!.indexIsChanging) {
+        setState(() {
+          if (_tabController!.index != 2) isFab = true;
+          else isFab = false;
+
+        });  // Garante que o estado seja atualizado
+      }
     });
   }
 
@@ -136,14 +148,14 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
           ),
         ],
       ),
-      // floatingActionButton: _showFab() ? _buildFab() : null,
-      floatingActionButton: _buildFab(),
+      floatingActionButton: isFab ? _buildFab() : null,
+      // floatingActionButton: _buildFab(),
     );
   }
 
-  // bool _showFab() {
-  //   return !isCoordination && (_tabController!.index == 0 || _tabController!.index == 1);
-  // }
+  bool _showFab() {
+    return _tabController!.index != 2;
+  }
 
   Widget _buildFab() {
     return FloatingActionButton(

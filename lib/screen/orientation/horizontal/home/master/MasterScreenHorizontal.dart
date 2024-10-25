@@ -33,6 +33,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
   final TextEditingController _newUnidadeController = TextEditingController();
   User? loggedUser;
   bool isCoordination = false;
+  bool isFab = true;
   List<dynamic> listUnidades = [];
   List<dynamic> listType = [];
   var itemUnidade = "";
@@ -46,6 +47,17 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
     super.initState();
     _initializeUser();
     _loadUnidaes();
+
+    // Listener para mudar o estado quando a aba muda
+    _tabController!.addListener(() {
+      if (_tabController!.indexIsChanging) {
+        setState(() {
+          if (_tabController!.index != 2) isFab = true;
+          else isFab = false;
+
+        });  // Garante que o estado seja atualizado
+      }
+    });
   }
 
   Future<void> _loadUnidaes() async {
@@ -138,14 +150,17 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
           ),
         ],
       ),
-      // floatingActionButton: _showFab() ? _buildFab() : null,
-      floatingActionButton: _buildFab(),
+      floatingActionButton: isFab ? _buildFab() : null,
+      // floatingActionButton:  null,
+      // floatingActionButton: _buildFab(),
     );
   }
 
   // bool _showFab() {
-  //   return !isCoordination && (_tabController!.index == 0 || _tabController!.index == 1);
+  //   return _tabController!.index != 2;
   // }
+
+
 
   Widget _buildFab() {
     return FloatingActionButton(
@@ -160,7 +175,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
         }
       },
       backgroundColor: AppColors.monteAlegreGreen,
-      child: Icon(Icons.add, color: Colors.white),
+      child: _tabController!.index == 2 ? Icon(Icons.email, color: Colors.white) : Icon(Icons.add, color: Colors.white),
     );
   }
 

@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:acompanhamento_familiar/screen/orientation/unspecified/home/master/UserDialogs.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -430,24 +426,19 @@ class _UserTabVerticalState extends State<UserTabVertical> {
                             estadoEdit
                         );
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Atualizando usuário...'),
-                            backgroundColor: AppColors.monteAlegreGreen,
-                          ),
-                        );
+                        _mostrarSnackBar('Atualizando usuário...', isSuccess: true);
                       }
                     },
                     child: Text(
                       'Salvar Usuário',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'ProductSansMedium'),
                     ),
                   ),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(
                       'Cancelar',
-                      style: TextStyle(color: Colors.red, fontSize: 16),
+                      style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: 'ProductSansMedium'),
                     ),
                   ),
                   SizedBox(height: 10),
@@ -670,6 +661,7 @@ class _UserTabVerticalState extends State<UserTabVertical> {
                     style: TextStyle(
                       fontSize: 18,
                       color: isSelected[0] ? Colors.white : Colors.grey,
+                        fontFamily: 'ProductSansMedium'
                     ),
                   ),
                 ),
@@ -680,6 +672,7 @@ class _UserTabVerticalState extends State<UserTabVertical> {
                     style: TextStyle(
                       fontSize: 18,
                       color: isSelected[1] ? Colors.white : Colors.grey,
+                        fontFamily: 'ProductSansMedium'
                     ),
                   ),
                 ),

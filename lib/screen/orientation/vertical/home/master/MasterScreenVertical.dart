@@ -109,6 +109,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Container(
@@ -119,6 +120,15 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
               indicatorWeight: 3.0,
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white70,
+              labelStyle: TextStyle(
+                fontFamily: 'ProductSansMedium', // fonte personalizada para a aba selecionada
+                fontSize: 16, // tamanho da fonte para a aba selecionada
+                fontWeight: FontWeight.bold,
+              ),
+              unselectedLabelStyle: TextStyle(
+                fontFamily: 'ProductSansMedium', // fonte personalizada para a aba não selecionada
+                fontSize: 14, // tamanho da fonte para a aba não selecionada
+              ),
               tabs: isCoordination
                   ? [
                 Tab(text: 'USUÁRIO'),
@@ -153,9 +163,9 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
     );
   }
 
-  bool _showFab() {
-    return _tabController!.index != 2;
-  }
+  // bool _showFab() {
+  //   return _tabController!.index != 2;
+  // }
 
   Widget _buildFab() {
     return FloatingActionButton(
@@ -235,14 +245,14 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
                   },
                   child: Text(
                     'Salvar Usuário',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(color: Colors.white, fontSize: 18,  fontFamily: 'ProductSansMedium',),
                   ),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(
                     'Cancelar',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
+                    style: TextStyle(color: Colors.red, fontSize: 16,  fontFamily: 'ProductSansMedium',),
                   ),
                 ),
               ],
@@ -433,71 +443,94 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
 
   // Método para exibir o BottomSheet e criar nova unidade
   void showCreateUnidadeBottomSheet(BuildContext context) {
-    if(!UnitTab.getIsLoadingShared() ){
+    if (!UnitTab.getIsLoadingShared()) {
       _newUnidadeController.text = '';
       showModalBottomSheet(
         context: context,
-        isScrollControlled: true,
+        isScrollControlled: true, // permite que o conteúdo suba com o teclado
         builder: (context) {
           return Padding(
-            // height: MediaQuery.of(context),
             padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).size.height * 0.2,
-              top: 20, left: 20, right: 20,
+              top: 20,
+              left: 20,
+              right: 20,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Criar Nova Unidade',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.monteAlegreGreen,
-                  ),
-                ),
-                SizedBox(height: 10),
-                TextField(
-                  controller: _newUnidadeController,
-                  decoration: InputDecoration(
-                    labelText: 'Nome da Unidade',
-                    labelStyle: TextStyle(color: AppColors.monteAlegreGreen),
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom, // ajusta o espaço com o teclado
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Criar Nova Unidade',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.monteAlegreGreen,
+                      fontFamily: 'ProductSansMedium',
                     ),
                   ),
-                ),
-                SizedBox(height: 30),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.monteAlegreGreen),
-                  onPressed: () {
-                    unidadesListTab = [];
-                    unidadesListTab = UnitTab.getListUnidades();
-                    _createUnidade(_newUnidadeController.text);
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'Salvar Unidade',
-                    style: TextStyle(color: Colors.white),
+                  SizedBox(height: 10),
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      textSelectionTheme: TextSelectionThemeData(
+                        cursorColor: AppColors.monteAlegreGreen, // Cor do cursor
+                        selectionColor: Colors.greenAccent, // Cor do fundo da seleção (claro)
+                        selectionHandleColor: AppColors.monteAlegreGreen, // Cor das alças de seleção (escuro)
+                      ),
+                    ),
+                    child: TextField(
+                      controller: _newUnidadeController,
+                      decoration: InputDecoration(
+                        labelText: 'Nome da Unidade',
+                        labelStyle: TextStyle(
+                          color: AppColors.monteAlegreGreen,
+                          fontFamily: 'ProductSansMedium',
+                        ),
+                        border: OutlineInputBorder(),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+                        ),
+                      ),
+                      style: TextStyle(
+                        fontFamily: 'ProductSansMedium', // fonte para o texto digitado
+                        fontSize: 16, // tamanho da fonte
+                      ),
+                    ),
                   ),
-                ),
-                SizedBox(height: 10),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    'Cancelar',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.monteAlegreGreen),
+                    onPressed: () {
+                      unidadesListTab = [];
+                      unidadesListTab = UnitTab.getListUnidades();
+                      _createUnidade(_newUnidadeController.text);
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Salvar Unidade',
+                      style: TextStyle(color: Colors.white, fontFamily: 'ProductSansMedium'),
+                    ),
                   ),
-                )
-              ],
+                  SizedBox(height: 5),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      'Cancelar',
+                      style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: 'ProductSansMedium'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
       );
     }
   }
+
 
   // Método para criar uma nova unidade e atualizar a lista
   Future<void> _createUnidade(String unidadeName) async {
@@ -516,13 +549,9 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
             UnitTab.addUnidade(newUnidade);
           });
           _newUnidadeController.clear();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Unidade criada com sucesso!'), backgroundColor: AppColors.monteAlegreGreen),
-          );
+          _mostrarSnackBar('Unidade criada com sucesso!', isSuccess: true);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erro ao criar unidade'), backgroundColor: Colors.red),
-          );
+          _mostrarSnackBar('Erro ao criar unidade', isSuccess: false);
         }
       } catch (error) {
         print("Erro ao criar unidade: $error");

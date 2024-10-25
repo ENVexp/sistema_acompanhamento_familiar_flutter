@@ -254,7 +254,7 @@ class _PerfilScreenVerticalState extends State<PerfilScreenVertical> {
   void _showSnackBar(String message, {required bool isSuccess}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(message, style: TextStyle(fontFamily: 'ProductSansMedium'),),
         backgroundColor: isSuccess ? AppColors.monteAlegreGreen : Colors.red,
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 1),
@@ -299,7 +299,7 @@ class _PerfilScreenVerticalState extends State<PerfilScreenVertical> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 24),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -325,6 +325,43 @@ class _PerfilScreenVerticalState extends State<PerfilScreenVertical> {
                         padding: EdgeInsets.only(left: 12),
                         child: Text(
                           user != null ? user!.unidade : "",
+                          style: TextStyle(
+                            fontFamily: 'ProductSansMedium',
+                            fontSize: 15,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: AppColors.monteAlegreGreen,
+                    child: Icon(Icons.security, color: Colors.white, size: 20),
+                  ),
+                  SizedBox(width: 8),
+                  Container(
+                    width: buttonWidth,
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5)),
+                      ],
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 12),
+                        child: Text(
+                          user != null ? user!.tipo : "",
                           style: TextStyle(
                             fontFamily: 'ProductSansMedium',
                             fontSize: 15,
@@ -363,7 +400,7 @@ class _PerfilScreenVerticalState extends State<PerfilScreenVertical> {
                   ),
                 ],
               ),
-              SizedBox(height: 45),
+              SizedBox(height: 35),
               Center(
                 child: ElevatedButton(
                   onPressed: () {

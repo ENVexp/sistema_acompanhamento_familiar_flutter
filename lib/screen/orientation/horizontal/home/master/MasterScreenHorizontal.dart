@@ -111,6 +111,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Container(

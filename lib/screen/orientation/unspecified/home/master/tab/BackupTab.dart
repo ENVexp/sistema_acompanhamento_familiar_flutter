@@ -82,7 +82,7 @@ class _BackupTabState extends State<BackupTab> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: isSuccess ? Colors.green : Colors.red,
+        backgroundColor: isSuccess ? AppColors.monteAlegreGreen : Colors.red,
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 3),
       ),
@@ -92,17 +92,34 @@ class _BackupTabState extends State<BackupTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset(
+                'assets/images/backup.png',
+                width: 100,  // largura da imagem
+                height: 100, // altura da imagem
+              ),
+              SizedBox(height: 20),
+              Text(
+                "Backup por e-mail",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontFamily: 'ProductSansMedium',
+                  fontWeight: FontWeight.bold, // adiciona o negrito
+                ),
+              ),
+              SizedBox(height: 10),
               // Exibe a mensagem de status
               Text(
                 _statusMessage,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, fontFamily: 'ProductSansMedium',),
               ),
               SizedBox(height: 20),  // Espaçamento entre o texto e o botão
 
@@ -129,7 +146,7 @@ class _BackupTabState extends State<BackupTab> {
                     SizedBox(width: 8),  // Espaço entre o ícone e o texto
                     Text(
                       'Fazer Backup',
-                      style: TextStyle(color: AppColors.monteAlegreGreen, fontSize: 18),
+                      style: TextStyle(color: AppColors.monteAlegreGreen, fontSize: 18, fontFamily: 'ProductSansMedium',),
                     ),
                   ],
                 ),

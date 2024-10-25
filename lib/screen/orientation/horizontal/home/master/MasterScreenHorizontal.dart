@@ -121,6 +121,15 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
               indicatorWeight: 3.0,
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white70,
+              labelStyle: TextStyle(
+                fontFamily: 'ProductSansMedium', // fonte personalizada para a aba selecionada
+                fontSize: 16, // tamanho da fonte para a aba selecionada
+                fontWeight: FontWeight.bold,
+              ),
+              unselectedLabelStyle: TextStyle(
+                fontFamily: 'ProductSansMedium', // fonte personalizada para a aba não selecionada
+                fontSize: 14, // tamanho da fonte para a aba não selecionada
+              ),
               tabs: isCoordination
                   ? [
                 Tab(text: 'USUÁRIO'),
@@ -132,6 +141,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
                 Tab(text: 'BACKUPS'),
               ],
             ),
+
           ),
           Expanded(
             child: TabBarView(

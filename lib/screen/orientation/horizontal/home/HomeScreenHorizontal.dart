@@ -118,7 +118,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
           data: Theme.of(context).copyWith(
             textSelectionTheme: TextSelectionThemeData(
               cursorColor: AppColors.monteAlegreGreen,
-              selectionColor: Colors.lightGreenAccent,
+              selectionColor: Colors.greenAccent,
               selectionHandleColor: AppColors.monteAlegreGreen,
             ),
           ),
@@ -308,7 +308,7 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
   void _showSnackBar(String message, {required bool isSuccess}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(message, style: TextStyle(fontFamily: 'ProductSansMedium'),),
         backgroundColor: isSuccess ? AppColors.monteAlegreGreen : Colors.red,
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 1),
@@ -326,6 +326,8 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
           _buildUserAvatar(),
           SizedBox(height: 16),
           _buildUserUnidade(user),
+          SizedBox(height: 5),
+          _buildUserTipo(user),
           SizedBox(height: 16),
           Expanded(
             child: Container(
@@ -391,6 +393,23 @@ class _HomeScreenHorizontalState extends State<HomeScreenHorizontal> {
         style: TextStyle(fontFamily: 'ProductSansMedium',
           color: Colors.grey,
           fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  Widget _buildUserTipo(User user) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Text(
+        "${user.tipo}",
+        textAlign: TextAlign.center,
+        style: TextStyle(fontFamily: 'ProductSansMedium',
+          color: Colors.grey,
+          fontWeight: FontWeight.w500,
           fontSize: 12,
         ),
         maxLines: 1,

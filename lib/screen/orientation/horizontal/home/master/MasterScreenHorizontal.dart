@@ -228,7 +228,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
                   onPressed: () {
                     if(_controleNome.text.trim() == "" || _controleSenha.text.trim() == "" || _controleEMail.text.trim() == ""){
                       SnackBar(
-                        content: Text('Preencha todos os campos!'),
+                        content: Text('Preencha todos os campos!', style: TextStyle(fontFamily: 'ProductSansMedium',),),
                         backgroundColor: Colors.red,
                       );
                     } else {
@@ -243,7 +243,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Criando novo usuário...'),
+                          content: Text('Criando novo usuário...', style: TextStyle(fontFamily: 'ProductSansMedium',),),
                           backgroundColor: AppColors.monteAlegreGreen,
                         ),
                       );
@@ -251,7 +251,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
                   },
                   child: Text(
                     'Salvar Usuário',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'ProductSansMedium',),
                   ),
                 ),
                 SizedBox(height: 5),
@@ -259,7 +259,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
                   onPressed: () => Navigator.pop(context),
                   child: Text(
                     'Cancelar',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
+                    style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: 'ProductSansMedium',),
                   ),
                 ),
               ],
@@ -472,17 +472,34 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: AppColors.monteAlegreGreen,
+                    fontFamily: 'ProductSansMedium',
                   ),
                 ),
                 SizedBox(height: 10),
-                TextField(
-                  controller: _newUnidadeController,
-                  decoration: InputDecoration(
-                    labelText: 'Nome da Unidade',
-                    labelStyle: TextStyle(color: AppColors.monteAlegreGreen),
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    textSelectionTheme: TextSelectionThemeData(
+                      cursorColor: AppColors.monteAlegreGreen, // Cor do cursor
+                      selectionColor: Colors.greenAccent, // Cor do fundo da seleção (claro)
+                      selectionHandleColor: AppColors.monteAlegreGreen, // Cor das alças de seleção (escuro)
+                    ),
+                  ),
+                  child: TextField(
+                    controller: _newUnidadeController,
+                    decoration: InputDecoration(
+                      labelText: 'Nome da Unidade',
+                      labelStyle: TextStyle(
+                        color: AppColors.monteAlegreGreen,
+                        fontFamily: 'ProductSansMedium',
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.monteAlegreGreen, width: 2.0),
+                      ),
+                    ),
+                    style: TextStyle(
+                      fontFamily: 'ProductSansMedium', // fonte para o texto digitado
+                      fontSize: 16, // tamanho da fonte
                     ),
                   ),
                 ),
@@ -497,7 +514,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
                   },
                   child: Text(
                     'Salvar Unidade',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.white, fontFamily: 'ProductSansMedium', fontSize: 18),
                   ),
                 ),
                 SizedBox(height: 10),
@@ -505,7 +522,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
                   onPressed: () => Navigator.pop(context),
                   child: Text(
                     'Cancelar',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
+                    style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: 'ProductSansMedium',),
                   ),
                 )
               ],

@@ -438,7 +438,7 @@ class _UserTabHorizontalState extends State<UserTabHorizontal> {
                     },
                     child: Text(
                       'Salvar Usuário',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'ProductSansMedium'),
                     ),
                   ),
                   SizedBox(height: 5),
@@ -446,7 +446,7 @@ class _UserTabHorizontalState extends State<UserTabHorizontal> {
                     onPressed: () => Navigator.pop(context),
                     child: Text(
                       'Cancelar',
-                      style: TextStyle(color: Colors.red, fontSize: 16),
+                      style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: 'ProductSansMedium'),
                     ),
                   ),
                   SizedBox(height: 10),
@@ -667,8 +667,9 @@ class _UserTabHorizontalState extends State<UserTabHorizontal> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text("Ativado",
                     style: TextStyle(
-                      fontSize: 18,
-                      color: isSelected[0] ? Colors.white : Colors.grey,
+                        fontSize: 18,
+                        color: isSelected[0] ? Colors.white : Colors.grey,
+                        fontFamily: 'ProductSansMedium'
                     ),
                   ),
                 ),
@@ -677,8 +678,9 @@ class _UserTabHorizontalState extends State<UserTabHorizontal> {
                   child: Text(
                     "Desativado",
                     style: TextStyle(
-                      fontSize: 18,
-                      color: isSelected[1] ? Colors.white : Colors.grey,
+                        fontSize: 18,
+                        color: isSelected[1] ? Colors.white : Colors.grey,
+                        fontFamily: 'ProductSansMedium'
                     ),
                   ),
                 ),

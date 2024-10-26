@@ -47,7 +47,7 @@ class UserDataController extends ChangeNotifier {
       // Fazendo a requisição com a ação 'usersPorUnidade' e um timeout de 30 segundos
       final response = await http
           .get(Uri.parse('${Url.URL_USERS_UNIDADES}?action=getUsers'))
-          .timeout(const Duration(seconds: 30)); // Timeout de 30 segundos
+          .timeout(const Duration(seconds: 90)); // Timeout de 30 segundos
 
       print("Status da requisição: ${response.statusCode}");
       print("Corpo completo da resposta: ${response.body}");
@@ -100,7 +100,7 @@ class UserDataController extends ChangeNotifier {
       // Fazendo a requisição com a ação 'usersPorUnidade' e um timeout de 30 segundos
       final response = await http
           .get(Uri.parse('${Url.URL_USERS_UNIDADES}?action=usersPorUnidade&unidade=$unidade'))
-          .timeout(const Duration(seconds: 30)); // Timeout de 30 segundos
+          .timeout(const Duration(seconds: 90)); // Timeout de 30 segundos
 
       print("Status da requisição: ${response.statusCode}");
       print("Corpo completo da resposta: ${response.body}");
@@ -152,7 +152,7 @@ class UserDataController extends ChangeNotifier {
       // Fazendo a requisição com a ação correta e um timeout de 30 segundos
       final response = await http
           .get(Uri.parse('${Url.URL_USERS_UNIDADES}?action=todosUsersEUnidades'))
-          .timeout(const Duration(seconds: 30)); // Timeout de 30 segundos
+          .timeout(const Duration(seconds: 90)); // Timeout de 30 segundos
 
       print("Status da requisição: ${response.statusCode}");
       print("Corpo completo da resposta: ${response.body}");
@@ -210,7 +210,7 @@ class UserDataController extends ChangeNotifier {
       // Fazendo a requisição para carregar todas as unidades
       final response = await http
           .get(Uri.parse('${Url.URL_USERS_UNIDADES}?action=todasUnidades'))
-          .timeout(const Duration(seconds: 30));
+          .timeout(const Duration(seconds: 90));
 
       print("Status da requisição: ${response.statusCode}");
       print("Corpo da resposta: ${response.body}");

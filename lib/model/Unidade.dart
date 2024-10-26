@@ -55,8 +55,9 @@ class Unidade {
 
   static isContains(List<Unidade> listUnidade, String unidade){
     for(Unidade u in listUnidade){
-      if(u.nome == unidade) return true;
-      return false;
+      if(u.nome.toUpperCase().trim() == unidade.toUpperCase().trim()) return true;
     }
+    return false;
   }
+
 }

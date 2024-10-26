@@ -343,8 +343,6 @@ class _UserTabVerticalState extends State<UserTabVertical> {
     return SizedBox(height: 4);
   }
 
-
-
   void _mostrarSnackBar(String mensagem, {required bool isSuccess}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -450,7 +448,6 @@ class _UserTabVerticalState extends State<UserTabVertical> {
       },
     );
   }
-
 
   Future<void> atualizarUsuario(
       String id,

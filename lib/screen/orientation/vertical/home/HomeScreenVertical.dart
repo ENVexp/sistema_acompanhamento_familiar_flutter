@@ -212,6 +212,7 @@ class _HomeScreenVerticalState extends State<HomeScreenVertical> {
         selectedLabelStyle: TextStyle(fontFamily: 'ProductSansMedium'),
         items: availableScreens.map((screen) {
           return BottomNavigationBarItem(
+            backgroundColor: Colors.white,
             icon: Icon(screenIcons[screen]),
             label: screen.toString().split('.').last.toUpperCase(),
           );

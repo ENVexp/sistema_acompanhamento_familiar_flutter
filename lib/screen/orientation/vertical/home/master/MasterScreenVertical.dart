@@ -81,9 +81,13 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
     _tabController!.addListener(() {
       if (_tabController!.indexIsChanging) {
         setState(() {
-          if (_tabController!.index != 2) isFab = true;
-          else isFab = false;
-
+          if(isCoordination) {
+            if (_tabController!.index == 0) isFab = true;
+            else isFab = false;
+          } else {
+            if (_tabController!.index != 2) isFab = true;
+            else isFab = false;
+          }
         });  // Garante que o estado seja atualizado
       }
     });

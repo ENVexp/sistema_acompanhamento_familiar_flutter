@@ -52,9 +52,13 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
     _tabController!.addListener(() {
       if (_tabController!.indexIsChanging) {
         setState(() {
-          if (_tabController!.index != 2) isFab = true;
-          else isFab = false;
-
+          if(isCoordination) {
+            if (_tabController!.index == 0) isFab = true;
+            else isFab = false;
+          } else {
+            if (_tabController!.index != 2) isFab = true;
+            else isFab = false;
+          }
         });  // Garante que o estado seja atualizado
       }
     });
@@ -63,7 +67,7 @@ class _MasterScreenHorizontalState extends State<MasterScreenHorizontal> with Si
   Future<void> _loadUnidaes() async {
     http.Response response = await http
         .get(Uri.parse('${Url.URL_USERS_UNIDADES}?action=todasUnidades'))
-        .timeout(const Duration(seconds: 30));
+        .timeout(const Duration(seconds: 90));
     try{
       listUnidades = jsonDecode(response.body);
       MasterScreenHorizontal.setList(listUnidades);

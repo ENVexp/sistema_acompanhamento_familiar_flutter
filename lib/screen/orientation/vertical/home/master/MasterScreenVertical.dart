@@ -39,6 +39,7 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
   UserTabVertical userTab = UserTabVertical();
   final TextEditingController _newUnidadeController = TextEditingController();
   List<Unidade> unidadesListTab = [];
+  late Widget _fab;
 
   @override
   void initState() {
@@ -77,19 +78,18 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
          );
     });
 
-    // Listener para mudar o estado quando a aba muda
+    // Adicione o listener diretamente no _tabController
     _tabController!.addListener(() {
-      if (_tabController!.indexIsChanging) {
-        setState(() {
-          if(isCoordination) {
-            if (_tabController!.index == 0) isFab = true;
-            else isFab = false;
-          } else {
-            if (_tabController!.index != 2) isFab = true;
-            else isFab = false;
-          }
-        });  // Garante que o estado seja atualizado
-      }
+    setState(() {
+    // Muda a visibilidade do FAB com base no índice atual da aba
+    if (isCoordination) {
+    isFab = _tabController!.index == 0;
+    } else {
+    isFab = _tabController!.index != 2;
+    }
+    });
+    // Para garantir que a lógica está correta
+    print("Index atual: ${_tabController!.index}, isFab: $isFab");
     });
   }
 
@@ -162,8 +162,8 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
           ),
         ],
       ),
-      floatingActionButton: isFab ? _buildFab() : null,
-      // floatingActionButton: _buildFab(),
+      // floatingActionButton: isFab ? _buildFab() : null,
+      floatingActionButton: _buildFab(),
     );
   }
 
@@ -171,21 +171,24 @@ class _MasterScreenVerticalState extends State<MasterScreenVertical> with Single
   //   return _tabController!.index != 2;
   // }
 
-  Widget _buildFab() {
-    return FloatingActionButton(
+  Widget? _buildFab() {
+    return isFab
+        ? FloatingActionButton(
       onPressed: () {
         if (_tabController!.index == 0) {
-          // Ação de criar usuário
-          // if(listUnidades.length > 0)  UserDialogs.showCreateUserBottomSheet(context, loggedUser, listUnidades);
-          if(listUnidades.length > 0)  showCreateUserBottomSheet(context, loggedUser, listUnidades);
+          // Ação para criar usuário
+          if (listUnidades.length > 0) {
+            showCreateUserBottomSheet(context, loggedUser, listUnidades);
+          }
         } else if (_tabController!.index == 1 && !isCoordination) {
-          // Ação de adicionar unidade
+          // Ação para adicionar unidade
           showCreateUnidadeBottomSheet(context);
         }
       },
       backgroundColor: AppColors.monteAlegreGreen,
       child: Icon(Icons.add, color: Colors.white),
-    );
+    )
+        : null; // Retorna null quando o FAB não deve ser exibido
   }
 
   void showCreateUserBottomSheet(BuildContext context, var user, List<dynamic> listUnidades) {

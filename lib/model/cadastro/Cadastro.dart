@@ -77,6 +77,8 @@ class Cadastro {
   List<MembroFamiliar> _membroFamiliar;
   PAIF? _paif;
   SICON? _sicon;
+  // String? _isPendente;
+  // String? _unidade;
 
   // Instância para gerar UUIDs aleatórios
   static final Uuid _uuid = Uuid();
@@ -325,4 +327,16 @@ class Cadastro {
 
   SICON? get sicon => _sicon;
   set sicon(SICON? value) => _sicon = value;
+
+  // String? get unidade => _unidade;
+  //
+  // set unidade(String value) {
+  //   _unidade = value;
+  // }
+  //
+  // String? get isPendente => _isPendente;
+  //
+  // set isPendente(String value) {
+  //   _isPendente = value;
+  // }
 }

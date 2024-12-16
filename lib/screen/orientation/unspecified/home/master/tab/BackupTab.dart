@@ -2,6 +2,7 @@ import 'package:acompanhamento_familiar/contract/Url.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../../../../contract/UserType.dart';
 import '../../../../../../model/User.dart';
 import '../../../../../../themes/app_colors.dart';
 import '../../../../horizontal/home/HomeScreenHorizontal.dart';
@@ -15,11 +16,16 @@ class _BackupTabState extends State<BackupTab> {
   bool _isLoading = false;  // Controla o estado de carregamento
   String _statusMessage = "Clique no botão para enviar o backup para o seu e-mail";  // Mensagem inicial
   var loggedUser;  // Variável para armazenar o usuário logado
+  bool isCoordination = false;
 
   @override
   void initState() {
     super.initState();
     _carregarUsuarioLogado();  // Carrega o usuário logado ao iniciar o widget
+    setState(() {
+      isCoordination = loggedUser?.tipo == UserType.COORDENACAO;
+      print('É coordenador: $isCoordination');
+    });
   }
 
   // Método para carregar o usuário logado
@@ -44,8 +50,14 @@ class _BackupTabState extends State<BackupTab> {
 
     try {
       final String email = loggedUser!.email;  // Pega o email do usuário logado
+
+      String url = '';
+      if(isCoordination) url =  '${Url.URL_BACKUP_EMAIL_COORDENADOR} + $email';
+      else url =  '${Url.URL_BACKUP_EMAIL} + $email';
+
+
       final response = await http.get(Uri.parse(
-          '${Url.URL_BACKUP_EMAIL} + $email'));
+          url));
 
       if (response.statusCode == 200) {
         setState(() {
